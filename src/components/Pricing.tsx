@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Check, Star } from 'lucide-react';
+import { Check, Star, ArrowLeft } from 'lucide-react';
 
 export default function Pricing() {
   const { user, setView } = useStore();
@@ -72,89 +72,202 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#faf9f6' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#08080d' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=EB+Garamond:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&family=Spectral:wght@400;500;600&display=swap');
 
-        .decorative-rule {
-          width: 60px;
-          height: 1px;
-          background-color: #8b6914;
+        /* Glass morphism utilities */
+        .bk-glass {
+          background: rgba(232, 228, 223, 0.05);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(232, 228, 223, 0.1);
+        }
+
+        .bk-glass-strong {
+          background: rgba(232, 228, 223, 0.08);
+          backdrop-filter: blur(25px);
+          border: 1px solid rgba(232, 228, 223, 0.15);
+        }
+
+        .bk-glow-accent {
+          box-shadow: 0 0 40px rgba(196, 149, 106, 0.15),
+                      inset 0 0 40px rgba(196, 149, 106, 0.05);
+        }
+
+        /* Divider */
+        .bk-divider {
+          width: 48px;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #c4956a, transparent);
           margin: 0 auto;
         }
 
-        .pricing-card {
-          background-color: #ffffff;
-          border: 1px solid #e8e2d9;
-          border-radius: 4px;
-          padding: 2rem;
+        /* Navigation Header */
+        .nav-header {
           display: flex;
-          flex-direction: column;
-          transition: all 0.3s ease;
-          position: relative;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem 0;
+          margin-bottom: 0;
         }
 
-        .pricing-card.pro {
-          border: 2px solid #8b6914;
+        .nav-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.75rem;
+          font-weight: 500;
+          color: #e8e4df;
+          letter-spacing: 0.05em;
+        }
+
+        .nav-btn-ghost {
+          background: transparent;
+          border: none;
+          color: #8a8490;
+          cursor: pointer;
+          padding: 0.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.875rem;
+          transition: all 0.3s ease;
+        }
+
+        .nav-btn-ghost:hover {
+          color: #c4956a;
+          transform: translateX(-2px);
+        }
+
+        /* Hero Section */
+        .hero-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 3.5rem;
+          font-weight: 300;
+          letter-spacing: -0.02em;
+          color: #e8e4df;
+          margin-bottom: 1.5rem;
+          line-height: 1.1;
+        }
+
+        /* Pricing Cards */
+        .pricing-card {
+          position: relative;
+          padding: 2.5rem;
+          border-radius: 1rem;
+          display: flex;
+          flex-direction: column;
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          animation: slideUpCards 0.6s ease-out forwards;
+          opacity: 0;
+        }
+
+        .pricing-card:nth-child(1) {
+          animation-delay: 0.1s;
+        }
+
+        .pricing-card:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+
+        @keyframes slideUpCards {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .pricing-card-free {
+          background: rgba(232, 228, 223, 0.04);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(232, 228, 223, 0.08);
+        }
+
+        .pricing-card-pro {
+          background: rgba(232, 228, 223, 0.08);
+          backdrop-filter: blur(25px);
+          border: 1px solid rgba(196, 149, 106, 0.2);
           transform: scale(1.02);
+          box-shadow: 0 0 50px rgba(196, 149, 106, 0.12),
+                      inset 0 0 50px rgba(196, 149, 106, 0.04);
         }
 
         .pricing-card:hover {
-          box-shadow: 0 12px 32px rgba(44, 36, 32, 0.12);
+          border-color: rgba(232, 228, 223, 0.2);
+          background: rgba(232, 228, 223, 0.06);
+          transform: translateY(-4px);
         }
 
-        .pricing-card.pro:hover {
-          box-shadow: 0 12px 32px rgba(139, 105, 20, 0.2);
+        .pricing-card-pro:hover {
+          border-color: rgba(196, 149, 106, 0.3);
+          background: rgba(232, 228, 223, 0.1);
+          transform: scale(1.025) translateY(-4px);
+          box-shadow: 0 0 60px rgba(196, 149, 106, 0.18),
+                      inset 0 0 60px rgba(196, 149, 106, 0.06);
         }
 
+        /* Recommended Badge */
         .recommended-badge {
           position: absolute;
-          top: -12px;
+          top: -16px;
           left: 50%;
           transform: translateX(-50%);
-          background-color: #8b6914;
-          color: #ffffff;
-          padding: 0.375rem 1rem;
-          border-radius: 20px;
-          font-family: 'EB Garamond', serif;
+          background: linear-gradient(135deg, rgba(196, 149, 106, 0.3) 0%, rgba(196, 149, 106, 0.1) 100%);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(196, 149, 106, 0.4);
+          color: #c4956a;
+          padding: 0.5rem 1.25rem;
+          border-radius: 0.75rem;
+          font-family: 'DM Sans', sans-serif;
           font-size: 0.75rem;
-          font-weight: 500;
-          letter-spacing: 0.05em;
+          font-weight: 600;
+          letter-spacing: 0.08em;
           display: flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.5rem;
+          text-transform: uppercase;
         }
 
+        /* Plan Info */
         .plan-name {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.75rem;
-          color: #2c2420;
-          margin-bottom: 0.5rem;
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.5rem;
+          font-weight: 500;
+          color: #e8e4df;
+          margin-bottom: 0.75rem;
+          letter-spacing: 0.02em;
         }
 
         .plan-price {
-          font-family: 'EB Garamond', serif;
-          font-size: 2.5rem;
-          font-weight: 500;
-          color: #2c2420;
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 3rem;
+          font-weight: 300;
+          color: #c4956a;
           margin-bottom: 0.25rem;
+          letter-spacing: -0.01em;
         }
 
         .plan-price-period {
-          font-family: 'EB Garamond', serif;
-          font-size: 0.95rem;
-          color: #9a8e82;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.875rem;
+          color: #8a8490;
           margin-bottom: 1.5rem;
+          font-weight: 400;
         }
 
         .plan-description {
-          font-family: 'EB Garamond', serif;
-          color: #9a8e82;
+          font-family: 'DM Sans', sans-serif;
+          color: #a89fa7;
           font-size: 0.95rem;
           line-height: 1.6;
           margin-bottom: 2rem;
+          font-weight: 400;
         }
 
+        /* Features List */
         .feature-list {
           flex-grow: 1;
           margin-bottom: 2rem;
@@ -165,9 +278,10 @@ export default function Pricing() {
           align-items: flex-start;
           gap: 0.75rem;
           padding: 0.75rem 0;
-          font-family: 'EB Garamond', serif;
-          font-size: 0.95rem;
-          border-bottom: 1px solid #f5f3f0;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.925rem;
+          border-bottom: 1px solid rgba(232, 228, 223, 0.05);
+          font-weight: 400;
         }
 
         .feature-item:last-child {
@@ -175,11 +289,11 @@ export default function Pricing() {
         }
 
         .feature-item.included {
-          color: #2c2420;
+          color: #e8e4df;
         }
 
         .feature-item.excluded {
-          color: #b8a98d;
+          color: #6a6270;
         }
 
         .feature-icon {
@@ -187,101 +301,183 @@ export default function Pricing() {
           margin-top: 2px;
         }
 
+        .feature-icon-check {
+          color: #c4956a;
+          width: 18px;
+          height: 18px;
+        }
+
+        /* Buttons */
+        .bk-btn-ghost {
+          background: transparent;
+          border: 1px solid rgba(232, 228, 223, 0.2);
+          color: #e8e4df;
+          padding: 0.75rem 1.5rem;
+          border-radius: 0.5rem;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.95rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          width: 100%;
+        }
+
+        .bk-btn-ghost:hover:not(:disabled) {
+          background: rgba(232, 228, 223, 0.08);
+          border-color: rgba(232, 228, 223, 0.3);
+        }
+
+        .bk-btn-ghost:disabled {
+          color: #8a8490;
+          border-color: rgba(232, 228, 223, 0.1);
+          cursor: not-allowed;
+        }
+
+        .bk-btn-accent {
+          background: linear-gradient(135deg, rgba(196, 149, 106, 0.3) 0%, rgba(196, 149, 106, 0.15) 100%);
+          border: 1px solid rgba(196, 149, 106, 0.4);
+          color: #c4956a;
+          padding: 0.75rem 1.5rem;
+          border-radius: 0.5rem;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          width: 100%;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .bk-btn-accent:hover:not(:disabled) {
+          background: linear-gradient(135deg, rgba(196, 149, 106, 0.4) 0%, rgba(196, 149, 106, 0.25) 100%);
+          border-color: rgba(196, 149, 106, 0.6);
+          box-shadow: 0 0 20px rgba(196, 149, 106, 0.2);
+        }
+
+        .bk-btn-accent:disabled {
+          background: linear-gradient(135deg, rgba(138, 132, 144, 0.2) 0%, rgba(138, 132, 144, 0.1) 100%);
+          border-color: rgba(138, 132, 144, 0.3);
+          color: #8a8490;
+          cursor: not-allowed;
+        }
+
+        /* FAQ Section */
         .faq-section {
-          max-width: 3xl;
+          max-width: 50rem;
           margin: 0 auto;
+          padding-top: 2rem;
+          border-top: 1px solid rgba(232, 228, 223, 0.1);
+        }
+
+        .faq-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 2.25rem;
+          font-weight: 300;
+          color: #e8e4df;
+          text-align: center;
+          margin-bottom: 1rem;
+          letter-spacing: -0.01em;
         }
 
         .faq-item {
-          border-bottom: 1px solid #e8e2d9;
-        }
-
-        .faq-trigger {
-          font-family: 'EB Garamond', serif;
-          font-size: 1.1rem;
-          color: #2c2420;
-        }
-
-        .faq-content {
-          font-family: 'EB Garamond', serif;
-          color: #9a8e82;
-          line-height: 1.7;
-          padding-top: 0.5rem;
-        }
-
-        .nav-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem 0;
-          border-bottom: 1px solid #e8e2d9;
-          margin-bottom: 2rem;
-        }
-
-        .nav-header-title {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.5rem;
-          color: #2c2420;
-        }
-
-        .nav-button {
-          font-family: 'EB Garamond', serif;
-          color: #8b6914;
-          border: 1px solid #8b6914;
-          background-color: transparent;
-          padding: 0.5rem 1rem;
-          border-radius: 4px;
-          cursor: pointer;
+          border-bottom: 1px solid rgba(232, 228, 223, 0.08);
+          background: rgba(232, 228, 223, 0.02);
+          border-radius: 0.5rem;
+          margin-bottom: 0.75rem;
           transition: all 0.3s ease;
         }
 
-        .nav-button:hover {
-          background-color: #8b6914;
-          color: #ffffff;
+        .faq-item:hover {
+          background: rgba(232, 228, 223, 0.04);
+          border-color: rgba(232, 228, 223, 0.12);
+        }
+
+        .faq-trigger {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.125rem;
+          font-weight: 400;
+          color: #e8e4df;
+          letter-spacing: 0.01em;
+          padding: 1.25rem;
+        }
+
+        .faq-content {
+          font-family: 'Spectral', serif;
+          color: #a89fa7;
+          line-height: 1.8;
+          padding: 0 1.25rem 1.25rem 1.25rem;
+          font-size: 0.975rem;
+          font-weight: 400;
+        }
+
+        /* Footer */
+        .footer-section {
+          border-top: 1px solid rgba(232, 228, 223, 0.1);
+          padding: 2rem 0;
+          margin-top: 3rem;
+        }
+
+        .footer-text {
+          font-family: 'DM Sans', sans-serif;
+          color: #8a8490;
+          font-size: 0.925rem;
+          text-align: center;
+        }
+
+        .footer-link {
+          color: #c4956a;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          border-bottom: 1px solid rgba(196, 149, 106, 0.3);
+        }
+
+        .footer-link:hover {
+          color: #e8e4df;
+          border-bottom-color: rgba(196, 149, 106, 0.6);
+        }
+
+        /* Sections Divider */
+        .section-divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(232, 228, 223, 0.1), transparent);
+          margin: 3rem 0;
         }
       `}</style>
 
       {/* Navigation Header */}
-      <div
-        className="border-b px-6"
-        style={{ backgroundColor: '#ffffff', borderColor: '#e8e2d9' }}
-      >
+      <div className="border-b px-6" style={{ borderColor: 'rgba(232, 228, 223, 0.08)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="nav-header">
-            <h1 className="nav-header-title">Booken</h1>
-            <button
-              onClick={() => setView('bookshelf')}
-              className="nav-button"
-            >
-              Back to Bookshelf
+            <h1 className="nav-title">Booken</h1>
+            <button onClick={() => setView('bookshelf')} className="nav-btn-ghost">
+              <ArrowLeft size={16} />
+              Back
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <h2
-            className="text-5xl mb-3"
-            style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}
-          >
-            Choose Your Plan
-          </h2>
-          <div className="decorative-rule mb-6"></div>
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        {/* Hero Section */}
+        <div className="text-center mb-20">
+          <h2 className="hero-title">Choose Your Plan</h2>
+          <div className="bk-divider mb-8"></div>
           <p
             className="text-lg max-w-2xl mx-auto"
-            style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82' }}
+            style={{ fontFamily: "'DM Sans', sans-serif", color: '#a89fa7' }}
           >
             Professional book production tools for independent authors and publishers
           </p>
         </div>
 
+        <div className="section-divider"></div>
+
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-20 max-w-4xl mx-auto">
           {/* Free Plan */}
-          <div className="pricing-card">
+          <div className={`pricing-card bk-glass pricing-card-free`}>
             <div className="plan-name">Free</div>
             <div className="plan-price">$0</div>
             <div className="plan-price-period">forever</div>
@@ -296,7 +492,7 @@ export default function Pricing() {
                   className={`feature-item ${feature.included ? 'included' : 'excluded'}`}
                 >
                   {feature.included ? (
-                    <Check size={18} style={{ color: '#8b6914' }} className="feature-icon" />
+                    <Check size={18} className="feature-icon feature-icon-check" />
                   ) : (
                     <div className="feature-icon w-5 h-5"></div>
                   )}
@@ -305,30 +501,24 @@ export default function Pricing() {
               ))}
             </div>
 
-            <Button
+            <button
               onClick={() => handleUpgrade('free')}
               disabled={user?.plan === 'free'}
-              className="w-full py-2"
+              className="bk-btn-ghost"
               style={{
-                fontFamily: 'EB Garamond, serif',
-                backgroundColor:
-                  user?.plan === 'free'
-                    ? '#b8a98d'
-                    : '#8b6914',
-                color: '#ffffff',
                 opacity: selectedPlan === 'free' ? 0.7 : 1,
                 transition: 'opacity 0.3s'
               }}
             >
               {user?.plan === 'free' ? 'Your Current Plan' : 'Downgrade to Free'}
-            </Button>
+            </button>
           </div>
 
           {/* Professional Plan */}
-          <div className="pricing-card pro">
+          <div className={`pricing-card bk-glass-strong pricing-card-pro`}>
             <div className="recommended-badge">
-              <Star size={12} fill="currentColor" />
-              RECOMMENDED
+              <Star size={14} fill="currentColor" />
+              Recommended
             </div>
 
             <div className="plan-name">Professional</div>
@@ -345,7 +535,7 @@ export default function Pricing() {
                   className={`feature-item ${feature.included ? 'included' : 'excluded'}`}
                 >
                   {feature.included ? (
-                    <Check size={18} style={{ color: '#8b6914' }} className="feature-icon" />
+                    <Check size={18} className="feature-icon feature-icon-check" />
                   ) : (
                     <div className="feature-icon w-5 h-5"></div>
                   )}
@@ -354,35 +544,26 @@ export default function Pricing() {
               ))}
             </div>
 
-            <Button
+            <button
               onClick={() => handleUpgrade('pro')}
               disabled={user?.plan === 'pro'}
-              className="w-full py-2"
+              className="bk-btn-accent"
               style={{
-                fontFamily: 'EB Garamond, serif',
-                backgroundColor:
-                  user?.plan === 'pro'
-                    ? '#b8a98d'
-                    : '#8b6914',
-                color: '#ffffff',
                 opacity: selectedPlan === 'pro' ? 0.7 : 1,
                 transition: 'opacity 0.3s'
               }}
             >
               {user?.plan === 'pro' ? 'Your Current Plan' : 'Upgrade to Pro'}
-            </Button>
+            </button>
           </div>
         </div>
 
+        <div className="section-divider"></div>
+
         {/* FAQ Section */}
         <div className="faq-section">
-          <h3
-            className="text-3xl text-center mb-2"
-            style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}
-          >
-            Frequently Asked Questions
-          </h3>
-          <div className="decorative-rule mb-8"></div>
+          <h3 className="faq-title">Frequently Asked Questions</h3>
+          <div className="bk-divider mb-8"></div>
 
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, idx) => (
@@ -400,19 +581,11 @@ export default function Pricing() {
       </div>
 
       {/* Footer */}
-      <div
-        className="border-t mt-16"
-        style={{ backgroundColor: '#ffffff', borderColor: '#e8e2d9' }}
-      >
-        <div className="max-w-7xl mx-auto px-6 py-8 text-center">
-          <p
-            style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82', fontSize: '0.95rem' }}
-          >
+      <div className="footer-section px-6" style={{ borderColor: 'rgba(232, 228, 223, 0.08)' }}>
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="footer-text">
             Questions about our plans?{' '}
-            <a
-              href="mailto:support@booken.io"
-              style={{ color: '#8b6914', textDecoration: 'underline' }}
-            >
+            <a href="mailto:support@booken.io" className="footer-link">
               Contact our support team
             </a>
           </p>

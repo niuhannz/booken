@@ -47,221 +47,384 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#faf9f6' }}>
+    <div className="relative min-h-screen w-full overflow-hidden" style={{ backgroundColor: '#08080d' }}>
+      {/* Aurora background with noise */}
+      <div className="bk-aurora absolute inset-0 z-0"></div>
+      <div className="bk-noise absolute inset-0 z-1 opacity-5"></div>
+
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=EB+Garamond:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@400;500&display=swap');
 
-        .decorative-rule {
-          width: 60px;
-          height: 1px;
-          background-color: #8b6914;
-          margin: 1rem auto;
+        .bk-aurora {
+          background: radial-gradient(ellipse 180% 120% at 50% 0%,
+            rgba(100, 150, 255, 0.15) 0%,
+            rgba(150, 100, 200, 0.1) 25%,
+            rgba(200, 80, 150, 0.08) 50%,
+            rgba(50, 100, 150, 0.05) 75%,
+            transparent 100%);
+          animation: aurora-drift 15s ease-in-out infinite;
         }
 
-        .book-motif {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 80px;
-          height: 80px;
-          margin: 0 auto 2rem;
+        @keyframes aurora-drift {
+          0%, 100% { transform: translateY(0) translateX(0); }
+          25% { transform: translateY(20px) translateX(-10px); }
+          50% { transform: translateY(0) translateX(10px); }
+          75% { transform: translateY(-20px) translateX(-5px); }
+        }
+
+        .bk-noise {
+          background-image:
+            url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2"/></filter><rect width="100" height="100" fill="white" filter="url(%23noise)"/></svg>');
+          background-size: 50px 50px;
+          pointer-events: none;
+        }
+
+        .bk-glass-strong {
+          background: rgba(14, 12, 20, 0.7);
+          backdrop-filter: blur(24px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                      inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .bk-glass-input {
+          background: rgba(30, 25, 40, 0.6);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          backdrop-filter: blur(16px);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bk-glass-input:focus,
+        .bk-glass-input:focus-visible {
+          background: rgba(40, 35, 50, 0.8);
+          border-color: rgba(196, 149, 106, 0.4);
+          box-shadow: 0 0 20px rgba(196, 149, 106, 0.2),
+                      inset 0 0 10px rgba(196, 149, 106, 0.05);
+          outline: none;
+        }
+
+        .bk-btn-accent {
+          background: linear-gradient(135deg, rgba(196, 149, 106, 0.9) 0%, rgba(196, 149, 106, 0.8) 100%);
+          border: 1px solid rgba(196, 149, 106, 0.3);
+          color: #08080d;
+          font-weight: 500;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 15px rgba(196, 149, 106, 0.25),
+                      inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .bk-btn-accent:hover:not(:disabled) {
+          background: linear-gradient(135deg, rgba(196, 149, 106, 1) 0%, rgba(196, 149, 106, 0.9) 100%);
+          box-shadow: 0 6px 25px rgba(196, 149, 106, 0.35),
+                      inset 0 1px 1px rgba(255, 255, 255, 0.15);
+          transform: translateY(-1px);
+        }
+
+        .bk-btn-accent:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .bk-btn-ghost {
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(196, 149, 106, 0.2);
+          color: #c4956a;
+          font-weight: 400;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(8px);
+        }
+
+        .bk-btn-ghost:hover:not(:disabled) {
+          background: rgba(196, 149, 106, 0.08);
+          border-color: rgba(196, 149, 106, 0.4);
+          box-shadow: 0 0 15px rgba(196, 149, 106, 0.15);
+        }
+
+        .bk-btn-ghost:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .bk-divider {
+          width: 3px;
+          height: 40px;
+          background: linear-gradient(180deg, transparent 0%, rgba(196, 149, 106, 0.3) 50%, transparent 100%);
+          margin: 1.5rem auto;
+        }
+
+        .bk-animate-in {
+          animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          opacity: 0;
+        }
+
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .book-glow {
           position: relative;
+          filter: drop-shadow(0 0 20px rgba(196, 149, 106, 0.4));
+          animation: subtle-glow 3s ease-in-out infinite;
         }
 
-        .book-spine {
-          width: 60px;
-          height: 70px;
-          background: linear-gradient(90deg, #9a8e82 0%, #b8a98d 50%, #9a8e82 100%);
-          border-radius: 2px;
-          box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        @keyframes subtle-glow {
+          0%, 100% { filter: drop-shadow(0 0 20px rgba(196, 149, 106, 0.4)); }
+          50% { filter: drop-shadow(0 0 25px rgba(196, 149, 106, 0.6)); }
         }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
       `}</style>
 
-      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        {/* Left Side: Literary Quote & Decoration */}
-        <div className="hidden md:flex flex-col justify-center items-center p-8">
-          <div className="book-motif">
-            <BookOpen size={64} color="#8b6914" strokeWidth={1.5} />
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+          {/* Left Side: Floating Glass Panel with Branding */}
+          <div className="hidden md:flex flex-col justify-center items-center p-8 bk-animate-in stagger-1">
+            <div className="bk-glass-strong rounded-3xl p-12 w-full max-w-sm">
+              {/* Book Icon with Glow */}
+              <div className="flex justify-center mb-8 bk-animate-in stagger-2">
+                <div className="book-glow">
+                  <BookOpen size={80} color="#c4956a" strokeWidth={1.2} />
+                </div>
+              </div>
+
+              {/* Brand Name */}
+              <h2
+                className="text-5xl text-center mb-4 bk-animate-in stagger-3"
+                style={{
+                  fontFamily: 'Cormorant Garamond, serif',
+                  fontWeight: 300,
+                  color: '#e8e4df',
+                  letterSpacing: '0.05em'
+                }}
+              >
+                Booken
+              </h2>
+
+              {/* Decorative Divider */}
+              <div className="flex justify-center mb-8 bk-animate-in stagger-4">
+                <div className="bk-divider"></div>
+              </div>
+
+              {/* Literary Quote */}
+              <blockquote className="mt-8 mb-6 bk-animate-in stagger-4" style={{ textAlign: 'center' }}>
+                <p
+                  className="italic text-lg leading-relaxed mb-4"
+                  style={{
+                    fontFamily: 'Cormorant Garamond, serif',
+                    color: '#a89d95',
+                    fontWeight: 300
+                  }}
+                >
+                  "A room without books is like a body without a soul."
+                </p>
+                <footer className="text-sm" style={{ color: '#8a8490' }}>
+                  — Cicero
+                </footer>
+              </blockquote>
+
+              {/* Divider */}
+              <div className="flex justify-center mt-8">
+                <div className="bk-divider"></div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-center">
-            <h2
-              className="text-3xl mb-2"
-              style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}
+          {/* Right Side: Auth Form in Glass Card */}
+          <div className="bk-glass-strong rounded-2xl p-8 md:p-12 w-full bk-animate-in stagger-2">
+            {/* Title */}
+            <h1
+              className="text-5xl mb-8 text-center bk-animate-in stagger-3"
+              style={{
+                fontFamily: 'Cormorant Garamond, serif',
+                fontWeight: 300,
+                color: '#e8e4df',
+                letterSpacing: '0.02em'
+              }}
             >
-              Booken
-            </h2>
-            <p className="text-sm tracking-widest" style={{ fontFamily: 'EB Garamond, serif', color: '#b8a98d', letterSpacing: '0.2em' }}>
-              booken.io
-            </p>
-            <div className="decorative-rule"></div>
+              {mode === 'signin' ? 'Sign In' : 'Create Account'}
+            </h1>
 
-            <blockquote className="mt-8 mb-6" style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82' }}>
-              <p className="italic text-lg leading-relaxed mb-4">
-                "There is no friend as loyal as a book."
-              </p>
-              <footer className="text-sm" style={{ color: '#b8a98d' }}>
-                — Ernest Hemingway
-              </footer>
-            </blockquote>
+            <form onSubmit={handleSubmit} className="space-y-6 bk-animate-in stagger-4">
+              {/* Name Field - Signup Only */}
+              {mode === 'signup' && (
+                <div>
+                  <Label
+                    htmlFor="name"
+                    style={{
+                      fontFamily: 'DM Sans, sans-serif',
+                      color: '#8a8490',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      display: 'block',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    Full Name
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required={mode === 'signup'}
+                    className="w-full bk-glass-input rounded-lg px-4 py-3 text-base"
+                    style={{
+                      fontFamily: 'DM Sans, sans-serif',
+                      color: '#e8e4df'
+                    }}
+                  />
+                </div>
+              )}
 
-            <div className="decorative-rule mt-8"></div>
-
-            <p
-              className="text-sm mt-8 leading-relaxed"
-              style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82' }}
-            >
-              Professional book production tools<br />for independent authors and publishers.
-            </p>
-          </div>
-        </div>
-
-        {/* Right Side: Form */}
-        <div
-          className="p-8 md:p-12 rounded-lg shadow-lg"
-          style={{ backgroundColor: '#ffffff', borderTop: '2px solid #8b6914' }}
-        >
-          <h1
-            className="text-4xl mb-2 text-center"
-            style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}
-          >
-            {mode === 'signin' ? 'Sign In' : 'Create Account'}
-          </h1>
-
-          <div className="decorative-rule"></div>
-
-          <form onSubmit={handleSubmit} className="space-y-6 mt-8">
-            {mode === 'signup' && (
+              {/* Email Field */}
               <div>
                 <Label
-                  htmlFor="name"
-                  style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
+                  htmlFor="email"
+                  style={{
+                    fontFamily: 'DM Sans, sans-serif',
+                    color: '#8a8490',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    display: 'block',
+                    marginBottom: '8px'
+                  }}
                 >
-                  Full Name
+                  Email Address
                 </Label>
                 <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required={mode === 'signup'}
-                  className="mt-2"
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full bk-glass-input rounded-lg px-4 py-3 text-base"
                   style={{
-                    fontFamily: 'EB Garamond, serif',
-                    borderColor: '#e8e2d9',
-                    color: '#2c2420'
+                    fontFamily: 'DM Sans, sans-serif',
+                    color: '#e8e4df'
                   }}
                 />
               </div>
-            )}
 
-            <div>
-              <Label
-                htmlFor="email"
-                style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
-              >
-                Email Address
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="mt-2"
-                style={{
-                  fontFamily: 'EB Garamond, serif',
-                  borderColor: '#e8e2d9',
-                  color: '#2c2420'
-                }}
-              />
-            </div>
-
-            <div>
-              <Label
-                htmlFor="password"
-                style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
-              >
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="mt-2"
-                style={{
-                  fontFamily: 'EB Garamond, serif',
-                  borderColor: '#e8e2d9',
-                  color: '#2c2420'
-                }}
-              />
-            </div>
-
-            {error && (
-              <div
-                className="p-3 rounded text-sm"
-                style={{ backgroundColor: '#fde2e4', color: '#c02c2c', fontFamily: 'EB Garamond, serif' }}
-              >
-                {error}
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 text-base font-medium rounded"
-              style={{
-                fontFamily: 'EB Garamond, serif',
-                backgroundColor: '#8b6914',
-                color: '#ffffff',
-                borderColor: '#8b6914'
-              }}
-            >
-              {loading ? 'Processing...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
-            </Button>
-          </form>
-
-          <div className="decorative-rule my-6"></div>
-
-          <div className="space-y-4">
-            <button
-              type="button"
-              onClick={handleGuestLogin}
-              disabled={loading}
-              className="w-full py-2 text-sm rounded border transition-all"
-              style={{
-                fontFamily: 'EB Garamond, serif',
-                color: '#8b6914',
-                borderColor: '#8b6914',
-                backgroundColor: 'transparent'
-              }}
-            >
-              Continue as Guest
-            </button>
-
-            <div className="text-center">
-              <p style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82', fontSize: '14px' }}>
-                {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode(mode === 'signin' ? 'signup' : 'signin');
-                    setError('');
-                    setName('');
-                    setEmail('');
-                    setPassword('');
+              {/* Password Field */}
+              <div>
+                <Label
+                  htmlFor="password"
+                  style={{
+                    fontFamily: 'DM Sans, sans-serif',
+                    color: '#8a8490',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    display: 'block',
+                    marginBottom: '8px'
                   }}
-                  className="font-medium"
-                  style={{ color: '#8b6914' }}
                 >
-                  {mode === 'signin' ? 'Sign Up' : 'Sign In'}
-                </button>
-              </p>
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full bk-glass-input rounded-lg px-4 py-3 text-base"
+                  style={{
+                    fontFamily: 'DM Sans, sans-serif',
+                    color: '#e8e4df'
+                  }}
+                />
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div
+                  className="rounded-lg p-4 text-sm bk-glass-strong"
+                  style={{
+                    border: '1px solid rgba(220, 80, 100, 0.3)',
+                    color: '#ff6b7a',
+                    fontFamily: 'DM Sans, sans-serif',
+                    backgroundColor: 'rgba(220, 80, 100, 0.08)'
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bk-btn-accent rounded-lg py-3 text-base font-medium"
+                style={{ fontFamily: 'DM Sans, sans-serif' }}
+              >
+                {loading ? 'Processing...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex justify-center my-8">
+              <div
+                style={{
+                  width: '100%',
+                  height: '1px',
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(196, 149, 106, 0.1) 50%, transparent 100%)'
+                }}
+              ></div>
+            </div>
+
+            {/* Guest & Mode Toggle */}
+            <div className="space-y-4 bk-animate-in stagger-5">
+              {/* Guest Button */}
+              <button
+                type="button"
+                onClick={handleGuestLogin}
+                disabled={loading}
+                className="w-full bk-btn-ghost rounded-lg py-3 text-sm font-medium"
+                style={{ fontFamily: 'DM Sans, sans-serif' }}
+              >
+                Continue as Guest
+              </button>
+
+              {/* Mode Toggle */}
+              <div className="text-center">
+                <p
+                  style={{
+                    fontFamily: 'DM Sans, sans-serif',
+                    color: '#8a8490',
+                    fontSize: '14px'
+                  }}
+                >
+                  {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode(mode === 'signin' ? 'signup' : 'signin');
+                      setError('');
+                      setName('');
+                      setEmail('');
+                      setPassword('');
+                    }}
+                    className="font-medium transition-colors hover:opacity-80"
+                    style={{ color: '#c4956a' }}
+                  >
+                    {mode === 'signin' ? 'Sign Up' : 'Sign In'}
+                  </button>
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -76,7 +76,7 @@ export default function Bookshelf() {
   };
 
   const calculateSpineWidth = (pageCount: number): string => {
-    const mmPerPage = 0.07; // ~70 microns per page
+    const mmPerPage = 0.07;
     return (pageCount * mmPerPage).toFixed(2);
   };
 
@@ -94,114 +94,346 @@ export default function Bookshelf() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#faf9f6' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#08080d' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=EB+Garamond:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Cormorant+Garamond:wght@300;400;500&display=swap');
 
-        .decorative-rule {
+        .bk-glass {
+          background: rgba(17, 17, 24, 0.4);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(200, 200, 208, 0.1);
+          border-radius: 0.75rem;
+        }
+
+        .bk-glass-input {
+          background: rgba(17, 17, 24, 0.5);
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(200, 200, 208, 0.12);
+          color: #e8e4df;
+          font-family: 'DM Sans', sans-serif;
+          border-radius: 0.5rem;
+          padding: 0.75rem 1rem;
+          transition: all 0.3s ease;
+        }
+
+        .bk-glass-input::placeholder {
+          color: #8a8490;
+        }
+
+        .bk-glass-input:focus {
+          outline: none;
+          border-color: rgba(196, 149, 106, 0.4);
+          background: rgba(17, 17, 24, 0.6);
+          box-shadow: 0 0 20px rgba(196, 149, 106, 0.15);
+        }
+
+        .bk-btn-accent {
+          background: linear-gradient(135deg, #c4956a 0%, #b8854f 100%);
+          color: #08080d;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 500;
+          border: none;
+          border-radius: 0.5rem;
+          padding: 0.625rem 1.25rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .bk-btn-accent:hover {
+          box-shadow: 0 8px 24px rgba(196, 149, 106, 0.3);
+          transform: translateY(-2px);
+        }
+
+        .bk-btn-accent:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .bk-btn-ghost {
+          background: transparent;
+          color: #e8e4df;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 500;
+          border: 1px solid rgba(200, 200, 208, 0.15);
+          border-radius: 0.5rem;
+          padding: 0.625rem 1.25rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .bk-btn-ghost:hover {
+          background: rgba(17, 17, 24, 0.6);
+          border-color: rgba(200, 200, 208, 0.25);
+        }
+
+        .bk-card-hover {
+          transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .bk-card-hover:hover {
+          border-color: rgba(196, 149, 106, 0.25);
+          background: rgba(17, 17, 24, 0.6);
+          box-shadow: 0 8px 32px rgba(196, 149, 106, 0.1), 0 0 1px rgba(196, 149, 106, 0.15);
+          transform: translateY(-4px);
+        }
+
+        .bk-animate-in {
+          animation: slideInUp 0.6s ease-out forwards;
+          opacity: 0;
+        }
+
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .decorative-divider {
           width: 100%;
           height: 1px;
-          background-color: #e8e2d9;
-          margin: 1.5rem 0;
-        }
-
-        .project-card {
-          background-color: #ffffff;
-          border: 1px solid #e8e2d9;
-          border-radius: 4px;
-          padding: 1.5rem;
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
-
-        .project-card:hover {
-          box-shadow: 0 8px 24px rgba(44, 36, 32, 0.1);
-          border-color: #8b6914;
+          background: linear-gradient(90deg, transparent 0%, rgba(200, 200, 208, 0.1) 50%, transparent 100%);
+          margin: 2rem 0;
         }
 
         .project-card-title {
-          font-family: 'EB Garamond', serif;
-          font-size: 1.25rem;
-          font-weight: 500;
-          color: #2c2420;
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.5rem;
+          font-weight: 400;
+          color: #e8e4df;
           margin-bottom: 0.5rem;
+          letter-spacing: -0.5px;
         }
 
         .project-card-author {
-          font-family: 'EB Garamond', serif;
-          font-size: 0.95rem;
-          color: #9a8e82;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.875rem;
+          color: #8a8490;
           margin-bottom: 1rem;
+          font-weight: 400;
         }
 
         .project-meta {
           display: flex;
-          gap: 1.5rem;
+          gap: 1rem;
           margin-bottom: 1rem;
-          font-family: 'EB Garamond', serif;
-          font-size: 0.875rem;
-          color: #9a8e82;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.8125rem;
+          color: #8a8490;
+          flex-wrap: wrap;
         }
 
         .version-badge {
           display: inline-block;
-          background-color: #f5f3f0;
-          color: #2c2420;
-          padding: 0.25rem 0.75rem;
-          border-radius: 20px;
-          font-family: 'EB Garamond', serif;
-          font-size: 0.8rem;
+          background: rgba(196, 149, 106, 0.12);
+          color: #c4956a;
+          padding: 0.375rem 0.875rem;
+          border-radius: 12px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.75rem;
+          font-weight: 500;
+          border: 1px solid rgba(196, 149, 106, 0.2);
+          backdrop-filter: blur(4px);
           margin-bottom: 1rem;
         }
 
         .empty-state {
           text-align: center;
-          padding: 4rem 2rem;
+          padding: 6rem 2rem;
+        }
+
+        .empty-state-icon {
+          color: #5a5560;
+          margin: 0 auto 2rem;
+          opacity: 0.6;
         }
 
         .empty-state-text {
-          font-family: 'EB Garamond', serif;
-          color: #9a8e82;
-          font-size: 1.1rem;
+          font-family: 'Cormorant Garamond', serif;
+          color: #8a8490;
+          font-size: 1.25rem;
           line-height: 1.6;
+          margin-bottom: 1.5rem;
+          font-weight: 300;
+          letter-spacing: -0.3px;
+        }
+
+        .version-history-item {
+          background: rgba(17, 17, 24, 0.3);
+          border: 1px solid rgba(200, 200, 208, 0.08);
+          border-radius: 0.5rem;
+          padding: 0.75rem;
+          font-family: 'DM Sans', sans-serif;
+          color: #8a8490;
+          font-size: 0.8rem;
+          transition: all 0.2s ease;
+        }
+
+        .version-history-item:hover {
+          background: rgba(17, 17, 24, 0.5);
+          border-color: rgba(200, 200, 208, 0.12);
+        }
+
+        .version-history-label {
+          color: #c4956a;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.25rem;
+        }
+
+        .glass-dialog-content {
+          background: rgba(17, 17, 24, 0.7);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(200, 200, 208, 0.15);
+          color: #e8e4df;
+        }
+
+        .glass-dialog-header {
+          border-bottom: 1px solid rgba(200, 200, 208, 0.1);
+        }
+
+        .glass-dialog-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.875rem;
+          font-weight: 400;
+          color: #e8e4df;
+          letter-spacing: -0.5px;
+        }
+
+        .glass-dialog-description {
+          font-family: 'DM Sans', sans-serif;
+          color: #8a8490;
+          font-size: 0.9375rem;
+        }
+
+        .spine-width-pill {
+          background: rgba(196, 149, 106, 0.1);
+          border: 1px solid rgba(196, 149, 106, 0.2);
+          color: #c4956a;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.8125rem;
+          font-weight: 500;
+          padding: 0.5rem 1rem;
+          border-radius: 12px;
+          text-align: center;
+          backdrop-filter: blur(4px);
+          margin-top: 1rem;
+        }
+
+        .header-glass-panel {
+          background: rgba(17, 17, 24, 0.3);
+          backdrop-filter: blur(8px);
+          border-bottom: 1px solid rgba(200, 200, 208, 0.1);
+        }
+
+        .welcome-text {
+          font-family: 'DM Sans', sans-serif;
+          color: #8a8490;
+          font-size: 0.9375rem;
+          font-weight: 400;
+          letter-spacing: 0.3px;
+        }
+
+        .bookshelf-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 3.75rem;
+          font-weight: 300;
+          color: #e8e4df;
+          letter-spacing: -1px;
+          margin-top: 0.5rem;
+        }
+
+        .action-button-small {
+          background: linear-gradient(135deg, #c4956a 0%, #b8854f 100%);
+          color: #08080d;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 500;
+          font-size: 0.8125rem;
+          border: none;
+          border-radius: 0.375rem;
+          padding: 0.5rem 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+          flex: 1;
+        }
+
+        .action-button-small:hover {
+          box-shadow: 0 6px 20px rgba(196, 149, 106, 0.25);
+          transform: translateY(-1px);
+        }
+
+        .delete-button-glass {
+          background: transparent;
+          border: 1px solid rgba(200, 200, 208, 0.12);
+          color: #8a8490;
+          border-radius: 0.375rem;
+          padding: 0.5rem 0.625rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .delete-button-glass:hover {
+          color: #e05252;
+          border-color: rgba(224, 82, 82, 0.3);
+          background: rgba(224, 82, 82, 0.08);
+        }
+
+        .card-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+          .card-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .card-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
         }
       `}</style>
 
       {/* Header */}
-      <div
-        className="border-b"
-        style={{ backgroundColor: '#ffffff', borderColor: '#e8e2d9' }}
-      >
+      <div className="header-glass-panel">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex justify-between items-start mb-6">
-            <div>
-              <p
-                style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82', fontSize: '14px' }}
-              >
+            <div className="flex-1">
+              <p className="welcome-text">
                 Welcome back, {user?.name || 'Author'}
               </p>
-              <h1
-                className="text-5xl mt-2"
-                style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}
-              >
+              <h1 className="bookshelf-title">
                 Your Bookshelf
               </h1>
             </div>
             <button
               onClick={logout}
-              className="text-sm px-4 py-2 rounded border transition-colors"
-              style={{
-                fontFamily: 'EB Garamond, serif',
-                color: '#8b6914',
-                borderColor: '#8b6914',
-                backgroundColor: 'transparent'
-              }}
+              className="bk-btn-ghost"
             >
               Sign Out
             </button>
           </div>
 
-          <div className="decorative-rule"></div>
+          <div className="decorative-divider"></div>
 
           {/* Action Bar */}
           <div className="flex gap-4 items-end">
@@ -211,36 +443,23 @@ export default function Bookshelf() {
                 placeholder="Search projects by title or author..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-                style={{
-                  fontFamily: 'EB Garamond, serif',
-                  borderColor: '#e8e2d9',
-                  color: '#2c2420',
-                  backgroundColor: '#faf9f6'
-                }}
+                className="bk-glass-input w-full"
               />
             </div>
 
             <Dialog open={showNewProjectDialog} onOpenChange={setShowNewProjectDialog}>
               <DialogTrigger asChild>
-                <Button
-                  className="gap-2"
-                  style={{
-                    fontFamily: 'EB Garamond, serif',
-                    backgroundColor: '#8b6914',
-                    color: '#ffffff'
-                  }}
-                >
+                <button className="bk-btn-accent">
                   <Plus size={18} />
                   New Project
-                </Button>
+                </button>
               </DialogTrigger>
-              <DialogContent style={{ backgroundColor: '#ffffff' }}>
-                <DialogHeader>
-                  <DialogTitle style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}>
+              <DialogContent className="glass-dialog-content">
+                <DialogHeader className="glass-dialog-header">
+                  <DialogTitle className="glass-dialog-title">
                     Create New Project
                   </DialogTitle>
-                  <DialogDescription style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82' }}>
+                  <DialogDescription className="glass-dialog-description">
                     Start a new book project by entering its details.
                   </DialogDescription>
                 </DialogHeader>
@@ -249,7 +468,7 @@ export default function Bookshelf() {
                   <div>
                     <Label
                       htmlFor="project-title"
-                      style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
+                      style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
                     >
                       Book Title
                     </Label>
@@ -258,18 +477,14 @@ export default function Bookshelf() {
                       value={newProjectTitle}
                       onChange={(e) => setNewProjectTitle(e.target.value)}
                       placeholder="Enter book title"
-                      style={{
-                        fontFamily: 'EB Garamond, serif',
-                        borderColor: '#e8e2d9',
-                        color: '#2c2420'
-                      }}
+                      className="bk-glass-input w-full mt-1"
                     />
                   </div>
 
                   <div>
                     <Label
                       htmlFor="project-author"
-                      style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
+                      style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
                     >
                       Author Name
                     </Label>
@@ -278,26 +493,17 @@ export default function Bookshelf() {
                       value={newProjectAuthor}
                       onChange={(e) => setNewProjectAuthor(e.target.value)}
                       placeholder="Enter author name"
-                      style={{
-                        fontFamily: 'EB Garamond, serif',
-                        borderColor: '#e8e2d9',
-                        color: '#2c2420'
-                      }}
+                      className="bk-glass-input w-full mt-1"
                     />
                   </div>
 
-                  <Button
+                  <button
                     type="submit"
                     disabled={isCreating || !newProjectTitle.trim()}
-                    className="w-full"
-                    style={{
-                      fontFamily: 'EB Garamond, serif',
-                      backgroundColor: '#8b6914',
-                      color: '#ffffff'
-                    }}
+                    className="bk-btn-accent w-full justify-center"
                   >
                     {isCreating ? 'Creating...' : 'Create Project'}
-                  </Button>
+                  </button>
                 </form>
               </DialogContent>
             </Dialog>
@@ -309,8 +515,8 @@ export default function Bookshelf() {
       <div className="max-w-7xl mx-auto px-6 py-12">
         {filteredProjects.length === 0 ? (
           <div className="empty-state">
-            <Bookmark size={48} style={{ color: '#8b6914', margin: '0 auto 1.5rem' }} />
-            <p className="empty-state-text mb-4">
+            <Bookmark size={56} className="empty-state-icon" />
+            <p className="empty-state-text">
               {projects.length === 0
                 ? "No projects yet. Begin your journey by creating your first book."
                 : 'No projects match your search. Try a different query.'}
@@ -318,23 +524,16 @@ export default function Bookshelf() {
             {projects.length === 0 && (
               <Dialog open={showNewProjectDialog} onOpenChange={setShowNewProjectDialog}>
                 <DialogTrigger asChild>
-                  <Button
-                    style={{
-                      fontFamily: 'EB Garamond, serif',
-                      backgroundColor: '#8b6914',
-                      color: '#ffffff',
-                      marginTop: '1.5rem'
-                    }}
-                  >
+                  <button className="bk-btn-accent" style={{ margin: '0 auto' }}>
                     Create Your First Project
-                  </Button>
+                  </button>
                 </DialogTrigger>
-                <DialogContent style={{ backgroundColor: '#ffffff' }}>
-                  <DialogHeader>
-                    <DialogTitle style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}>
+                <DialogContent className="glass-dialog-content">
+                  <DialogHeader className="glass-dialog-header">
+                    <DialogTitle className="glass-dialog-title">
                       Create New Project
                     </DialogTitle>
-                    <DialogDescription style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82' }}>
+                    <DialogDescription className="glass-dialog-description">
                       Start a new book project by entering its details.
                     </DialogDescription>
                   </DialogHeader>
@@ -343,7 +542,7 @@ export default function Bookshelf() {
                     <div>
                       <Label
                         htmlFor="project-title"
-                        style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
+                        style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
                       >
                         Book Title
                       </Label>
@@ -352,18 +551,14 @@ export default function Bookshelf() {
                         value={newProjectTitle}
                         onChange={(e) => setNewProjectTitle(e.target.value)}
                         placeholder="Enter book title"
-                        style={{
-                          fontFamily: 'EB Garamond, serif',
-                          borderColor: '#e8e2d9',
-                          color: '#2c2420'
-                        }}
+                        className="bk-glass-input w-full mt-1"
                       />
                     </div>
 
                     <div>
                       <Label
                         htmlFor="project-author"
-                        style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
+                        style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
                       >
                         Author Name
                       </Label>
@@ -372,37 +567,32 @@ export default function Bookshelf() {
                         value={newProjectAuthor}
                         onChange={(e) => setNewProjectAuthor(e.target.value)}
                         placeholder="Enter author name"
-                        style={{
-                          fontFamily: 'EB Garamond, serif',
-                          borderColor: '#e8e2d9',
-                          color: '#2c2420'
-                        }}
+                        className="bk-glass-input w-full mt-1"
                       />
                     </div>
 
-                    <Button
+                    <button
                       type="submit"
                       disabled={isCreating || !newProjectTitle.trim()}
-                      className="w-full"
-                      style={{
-                        fontFamily: 'EB Garamond, serif',
-                        backgroundColor: '#8b6914',
-                        color: '#ffffff'
-                      }}
+                      className="bk-btn-accent w-full justify-center"
                     >
                       {isCreating ? 'Creating...' : 'Create Project'}
-                    </Button>
+                    </button>
                   </form>
                 </DialogContent>
               </Dialog>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="flex flex-col">
+          <div className="card-grid">
+            {filteredProjects.map((project, index) => (
+              <div
+                key={project.id}
+                className="bk-animate-in flex flex-col"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
                 <div
-                  className="project-card flex-1 flex flex-col"
+                  className="bk-glass bk-card-hover flex-1 flex flex-col p-5"
                   onClick={() =>
                     setExpandedProjectId(
                       expandedProjectId === project.id ? null : project.id
@@ -426,33 +616,22 @@ export default function Bookshelf() {
 
                   {/* Expanded Version History */}
                   {expandedProjectId === project.id && project.versions.length > 0 && (
-                    <div
-                      className="mt-4 pt-4 border-t"
-                      style={{ borderColor: '#e8e2d9' }}
-                    >
+                    <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(200, 200, 208, 0.1)' }}>
                       <p
                         className="text-sm font-medium mb-3"
-                        style={{ fontFamily: 'EB Garamond, serif', color: '#2c2420' }}
+                        style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df' }}
                       >
                         Version History
                       </p>
                       <div className="space-y-2 max-h-48 overflow-y-auto">
                         {project.versions.map((version) => (
-                          <div
-                            key={version.id}
-                            className="text-xs p-2 rounded"
-                            style={{
-                              backgroundColor: '#f5f3f0',
-                              fontFamily: 'EB Garamond, serif',
-                              color: '#9a8e82'
-                            }}
-                          >
-                            <div className="flex items-center gap-2 font-medium">
+                          <div key={version.id} className="version-history-item">
+                            <div className="version-history-label">
                               <Clock size={12} />
                               {version.label}
                             </div>
                             <div>{version.wordCount} words</div>
-                            <div className="text-[11px]">{formatDate(version.timestamp)}</div>
+                            <div style={{ fontSize: '0.75rem' }}>{formatDate(version.timestamp)}</div>
                           </div>
                         ))}
                       </div>
@@ -461,70 +640,57 @@ export default function Bookshelf() {
 
                   {/* Action Buttons */}
                   <div className="flex gap-2 mt-4">
-                    <Button
+                    <button
                       onClick={() => handleOpenProject(project.id, 'typeset')}
-                      size="sm"
-                      className="flex-1 gap-2"
-                      style={{
-                        fontFamily: 'EB Garamond, serif',
-                        backgroundColor: '#8b6914',
-                        color: '#ffffff'
-                      }}
+                      className="action-button-small"
                     >
                       <Edit3 size={14} />
                       Typeset
-                    </Button>
-                    <Button
+                    </button>
+                    <button
                       onClick={() => handleOpenProject(project.id, 'cover')}
-                      size="sm"
-                      className="flex-1 gap-2"
-                      style={{
-                        fontFamily: 'EB Garamond, serif',
-                        backgroundColor: '#8b6914',
-                        color: '#ffffff'
-                      }}
+                      className="action-button-small"
                     >
                       <Edit3 size={14} />
                       Cover
-                    </Button>
+                    </button>
 
                     <AlertDialog open={projectToDelete === project.id} onOpenChange={(open: boolean) => {
                       if (!open) setProjectToDelete(null);
                     }}>
                       <button
                         onClick={() => setProjectToDelete(project.id)}
-                        className="p-2 rounded border transition-colors"
-                        style={{
-                          color: '#c02c2c',
-                          borderColor: '#e8e2d9',
-                          backgroundColor: 'transparent'
-                        }}
+                        className="delete-button-glass"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={14} />
                       </button>
-                      <AlertDialogContent style={{ backgroundColor: '#ffffff' }}>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle style={{ fontFamily: 'Playfair Display, serif', color: '#2c2420' }}>
+                      <AlertDialogContent className="glass-dialog-content">
+                        <AlertDialogHeader className="glass-dialog-header">
+                          <AlertDialogTitle className="glass-dialog-title">
                             Delete Project
                           </AlertDialogTitle>
-                          <AlertDialogDescription style={{ fontFamily: 'EB Garamond, serif', color: '#9a8e82' }}>
+                          <AlertDialogDescription className="glass-dialog-description">
                             Are you sure you want to delete "{project.title}"? This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="flex gap-3">
-                          <AlertDialogCancel style={{
-                            fontFamily: 'EB Garamond, serif',
-                            color: '#2c2420',
-                            borderColor: '#e8e2d9'
-                          }}>
+                          <AlertDialogCancel
+                            style={{
+                              fontFamily: 'DM Sans, sans-serif',
+                              color: '#e8e4df',
+                              borderColor: 'rgba(200, 200, 208, 0.15)',
+                              background: 'transparent'
+                            }}
+                          >
                             Cancel
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDeleteProject(project.id)}
                             style={{
-                              fontFamily: 'EB Garamond, serif',
-                              backgroundColor: '#c02c2c',
-                              color: '#ffffff'
+                              fontFamily: 'DM Sans, sans-serif',
+                              backgroundColor: '#e05252',
+                              color: '#ffffff',
+                              border: 'none'
                             }}
                           >
                             Delete
@@ -536,14 +702,7 @@ export default function Bookshelf() {
                 </div>
 
                 {/* Spine Width Info */}
-                <div
-                  className="text-xs text-center mt-3 py-2 rounded"
-                  style={{
-                    fontFamily: 'EB Garamond, serif',
-                    color: '#9a8e82',
-                    backgroundColor: '#f5f3f0'
-                  }}
-                >
+                <div className="spine-width-pill">
                   Estimated spine: {calculateSpineWidth(project.pageCount)}mm
                 </div>
               </div>

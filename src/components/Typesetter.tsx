@@ -528,7 +528,7 @@ export default function Typesetter() {
           width: pageWPx,
           height: pageHPx,
           background: '#e8e4de',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.4), 0 0 60px rgba(196,149,106,0.03)',
           borderRadius: 2,
           overflow: 'hidden',
         }}
@@ -662,27 +662,27 @@ export default function Typesetter() {
   const activeProject = store.activeProjectId ? store.getActiveProject?.() : null;
 
   return (
-    <div className="flex h-full" style={{ background: '#f7f5f1' }}>
+    <div className="flex h-full" style={{ background: '#08080d' }}>
       {/* ── Left Settings Panel ── */}
       <div
-        className="w-[280px] flex-shrink-0 overflow-y-auto border-r"
-        style={{ background: '#f5f2ed', borderColor: '#e0d9cf' }}
+        className="w-[280px] flex-shrink-0 overflow-y-auto border-r bk-glass-strong"
+        style={{ borderColor: 'rgba(255,255,255,0.06)' }}
       >
         <div className="space-y-5 p-4">
           <h2
-            className="text-lg font-bold"
-            style={{ fontFamily: '"Playfair Display", serif', color: '#2c2416' }}
+            className="text-lg font-bold bk-display"
+            style={{ fontFamily: '"Cormorant Garamond", serif', color: '#e8e4df' }}
           >
             Typesetter
           </h2>
 
           {/* Active Project Info */}
           {activeProject && (
-            <div className="rounded p-3" style={{ background: '#e8e4de', borderLeft: '3px solid #8b6914' }}>
-              <p className="text-xs font-semibold" style={{ color: '#8b6914', marginBottom: '0.25rem' }}>
+            <div className="rounded p-3" style={{ background: 'rgba(196,149,106,0.08)', borderLeft: '3px solid #c4956a' }}>
+              <p className="text-xs font-semibold" style={{ color: '#c4956a', marginBottom: '0.25rem' }}>
                 ACTIVE PROJECT
               </p>
-              <p className="text-xs" style={{ color: '#2c2416', fontFamily: '"EB Garamond", serif' }}>
+              <p className="text-xs" style={{ color: '#e8e4df', fontFamily: '"EB Garamond", serif' }}>
                 {activeProject.title}
               </p>
             </div>
@@ -690,11 +690,11 @@ export default function Typesetter() {
 
           {/* Presets Dropdown */}
           <section className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b5f4f' }}>
+            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a5560' }}>
               Typography Presets
             </h3>
             <Select onValueChange={(v) => applyPreset(parseInt(v))}>
-              <SelectTrigger className="h-8 text-xs" style={{ background: '#fff' }}>
+              <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="Select a preset..." />
               </SelectTrigger>
               <SelectContent>
@@ -702,7 +702,7 @@ export default function Typesetter() {
                   <SelectItem key={idx} value={String(idx)}>
                     <div>
                       <span className="font-medium">{preset.name}</span>
-                      <span className="ml-2 text-gray-500 text-xs">— {preset.description}</span>
+                      <span className="ml-2 text-[#5a5560] text-xs">— {preset.description}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -710,15 +710,15 @@ export default function Typesetter() {
             </Select>
           </section>
 
-          <div style={{ borderTop: '1px solid #e0d9cf' }} />
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
 
           {/* Page Setup */}
           <section className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b5f4f' }}>
+            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a5560' }}>
               Page Setup
             </h3>
             <div>
-              <Label className="mb-1 text-xs" style={{ color: '#2c2416' }}>Trim Size</Label>
+              <Label className="mb-1 text-xs" style={{ color: '#8a8490' }}>Trim Size</Label>
               <Select
                 value={settings.trimSizeName}
                 onValueChange={(v) => set('trimSizeName', v)}
@@ -739,7 +739,7 @@ export default function Typesetter() {
             {settings.trimSizeName === 'Custom' && (
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label className="text-xs" style={{ color: '#2c2416' }}>W</Label>
+                  <Label className="text-xs" style={{ color: '#8a8490' }}>W</Label>
                   <Input
                     type="number"
                     step={0.1}
@@ -749,7 +749,7 @@ export default function Typesetter() {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs" style={{ color: '#2c2416' }}>H</Label>
+                  <Label className="text-xs" style={{ color: '#8a8490' }}>H</Label>
                   <Input
                     type="number"
                     step={0.1}
@@ -762,11 +762,11 @@ export default function Typesetter() {
             )}
           </section>
 
-          <div style={{ borderTop: '1px solid #e0d9cf' }} />
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
 
           {/* Margins */}
           <section className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b5f4f' }}>
+            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a5560' }}>
               Margins
             </h3>
             {(['marginTop', 'marginBottom', 'marginInner', 'marginOuter'] as const).map((k) => {
@@ -780,7 +780,7 @@ export default function Typesetter() {
                       : 'Outer';
               return (
                 <div key={k}>
-                  <Label className="mb-1 flex justify-between text-xs" style={{ color: '#2c2416' }}>
+                  <Label className="mb-1 flex justify-between text-xs" style={{ color: '#8a8490' }}>
                     <span>{label}</span>
                     <span className="font-mono">{settings[k].toFixed(2)}"</span>
                   </Label>
@@ -795,7 +795,7 @@ export default function Typesetter() {
               );
             })}
             <div className="flex items-center justify-between">
-              <Label className="text-xs" style={{ color: '#2c2416' }}>Mirror Margins</Label>
+              <Label className="text-xs" style={{ color: '#8a8490' }}>Mirror Margins</Label>
               <Switch
                 checked={settings.mirrorMargins}
                 onCheckedChange={(v) => set('mirrorMargins', v)}
@@ -803,15 +803,15 @@ export default function Typesetter() {
             </div>
           </section>
 
-          <div style={{ borderTop: '1px solid #e0d9cf' }} />
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
 
           {/* Typography */}
           <section className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b5f4f' }}>
+            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a5560' }}>
               Typography
             </h3>
             <div>
-              <Label className="mb-1 text-xs" style={{ color: '#2c2416' }}>Font Family</Label>
+              <Label className="mb-1 text-xs" style={{ color: '#8a8490' }}>Font Family</Label>
               <Select
                 value={String(settings.fontIdx)}
                 onValueChange={(v) => set('fontIdx', parseInt(v))}
@@ -823,14 +823,14 @@ export default function Typesetter() {
                   {BOOK_FONTS.map((f, i) => (
                     <SelectItem key={f.name} value={String(i)}>
                       <span style={{ fontFamily: f.family }}>{f.name}</span>
-                      <span className="ml-2 text-gray-400">— {f.style}</span>
+                      <span className="ml-2 text-[#5a5560]">— {f.style}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#2c2416' }}>
+              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#8a8490' }}>
                 <span>Size</span>
                 <span className="font-mono">{settings.fontSize}pt</span>
               </Label>
@@ -843,7 +843,7 @@ export default function Typesetter() {
               />
             </div>
             <div>
-              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#2c2416' }}>
+              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#8a8490' }}>
                 <span>Leading</span>
                 <span className="font-mono">{settings.lineHeight.toFixed(2)}×</span>
               </Label>
@@ -856,7 +856,7 @@ export default function Typesetter() {
               />
             </div>
             <div>
-              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#2c2416' }}>
+              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#8a8490' }}>
                 <span>First-line Indent</span>
                 <span className="font-mono">{settings.firstLineIndent.toFixed(2)}"</span>
               </Label>
@@ -869,7 +869,7 @@ export default function Typesetter() {
               />
             </div>
             <div>
-              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#2c2416' }}>
+              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#8a8490' }}>
                 <span>¶ Spacing</span>
                 <span className="font-mono">{settings.paragraphSpacing}pt</span>
               </Label>
@@ -883,22 +883,22 @@ export default function Typesetter() {
             </div>
           </section>
 
-          <div style={{ borderTop: '1px solid #e0d9cf' }} />
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
 
           {/* Chapters */}
           <section className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b5f4f' }}>
+            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a5560' }}>
               Chapter Settings
             </h3>
             <div className="flex items-center justify-between">
-              <Label className="text-xs" style={{ color: '#2c2416' }}>Start on Recto</Label>
+              <Label className="text-xs" style={{ color: '#8a8490' }}>Start on Recto</Label>
               <Switch
                 checked={settings.chapterStartRecto}
                 onCheckedChange={(v) => set('chapterStartRecto', v)}
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label className="text-xs" style={{ color: '#2c2416' }}>Drop Caps</Label>
+              <Label className="text-xs" style={{ color: '#8a8490' }}>Drop Caps</Label>
               <Switch
                 checked={settings.dropCaps}
                 onCheckedChange={(v) => set('dropCaps', v)}
@@ -906,7 +906,7 @@ export default function Typesetter() {
             </div>
             {settings.dropCaps && (
               <div>
-                <Label className="mb-1 flex justify-between text-xs" style={{ color: '#2c2416' }}>
+                <Label className="mb-1 flex justify-between text-xs" style={{ color: '#8a8490' }}>
                   <span>Drop Cap Lines</span>
                   <span className="font-mono">{settings.dropCapLines}</span>
                 </Label>
@@ -920,7 +920,7 @@ export default function Typesetter() {
               </div>
             )}
             <div>
-              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#2c2416' }}>
+              <Label className="mb-1 flex justify-between text-xs" style={{ color: '#8a8490' }}>
                 <span>Heading Size</span>
                 <span className="font-mono">{settings.chapterFontSize}pt</span>
               </Label>
@@ -934,22 +934,22 @@ export default function Typesetter() {
             </div>
           </section>
 
-          <div style={{ borderTop: '1px solid #e0d9cf' }} />
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
 
           {/* Headers & Footers */}
           <section className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b5f4f' }}>
+            <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#5a5560' }}>
               Headers & Footers
             </h3>
             <div className="flex items-center justify-between">
-              <Label className="text-xs" style={{ color: '#2c2416' }}>Running Header</Label>
+              <Label className="text-xs" style={{ color: '#8a8490' }}>Running Header</Label>
               <Switch
                 checked={settings.showRunningHeader}
                 onCheckedChange={(v) => set('showRunningHeader', v)}
               />
             </div>
             <div>
-              <Label className="mb-1 text-xs" style={{ color: '#2c2416' }}>Book Title</Label>
+              <Label className="mb-1 text-xs" style={{ color: '#8a8490' }}>Book Title</Label>
               <Input
                 className="h-7 text-xs"
                 value={settings.bookTitle}
@@ -957,7 +957,7 @@ export default function Typesetter() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label className="text-xs" style={{ color: '#2c2416' }}>Page Numbers</Label>
+              <Label className="text-xs" style={{ color: '#8a8490' }}>Page Numbers</Label>
               <Switch
                 checked={settings.showPageNumbers}
                 onCheckedChange={(v) => set('showPageNumbers', v)}
@@ -966,7 +966,7 @@ export default function Typesetter() {
             {settings.showPageNumbers && (
               <>
                 <div>
-                  <Label className="mb-1 text-xs" style={{ color: '#2c2416' }}>Position</Label>
+                  <Label className="mb-1 text-xs" style={{ color: '#8a8490' }}>Position</Label>
                   <Select
                     value={settings.pageNumberPosition}
                     onValueChange={(v) => set('pageNumberPosition', v)}
@@ -982,7 +982,7 @@ export default function Typesetter() {
                   </Select>
                 </div>
                 <div>
-                  <Label className="mb-1 text-xs" style={{ color: '#2c2416' }}>Start From</Label>
+                  <Label className="mb-1 text-xs" style={{ color: '#8a8490' }}>Start From</Label>
                   <Input
                     type="number"
                     className="h-7 text-xs"
@@ -998,12 +998,12 @@ export default function Typesetter() {
           {/* Store Integration Buttons */}
           {activeProject && (
             <>
-              <div style={{ borderTop: '1px solid #e0d9cf' }} />
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }} />
               <div className="space-y-2">
                 <Button
                   size="sm"
-                  className="w-full text-xs"
-                  style={{ background: '#8b6914', color: '#fff', fontSize: '12px' }}
+                  className="bk-btn-accent w-full text-xs"
+                  style={{ width: '100%', fontSize: '12px' }}
                   onClick={saveToProject}
                 >
                   <Save className="mr-1 h-3 w-3" />
@@ -1011,9 +1011,8 @@ export default function Typesetter() {
                 </Button>
                 <Button
                   size="sm"
-                  variant="outline"
-                  className="w-full text-xs"
-                  style={{ borderColor: '#8b6914', color: '#8b6914' }}
+                  className="bk-btn-ghost w-full text-xs"
+                  style={{ width: '100%', fontSize: '12px' }}
                   onClick={saveVersionHandler}
                 >
                   <Save className="mr-1 h-3 w-3" />
@@ -1026,12 +1025,12 @@ export default function Typesetter() {
       </div>
 
       {/* ── Center: Manuscript Editor ── */}
-      <div className="flex flex-1 flex-col border-r" style={{ borderColor: '#e0d9cf' }}>
+      <div className="flex flex-1 flex-col border-r" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <div
           className="flex items-center justify-between border-b px-4 py-2"
-          style={{ borderColor: '#e0d9cf', background: '#f5f2ed' }}
+          style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)' }}
         >
-          <span className="text-sm font-semibold" style={{ color: '#2c2416', fontFamily: '"EB Garamond", serif' }}>
+          <span className="text-sm font-semibold" style={{ color: '#e8e4df', fontFamily: '"Cormorant Garamond", serif' }}>
             <FileText className="mr-1.5 inline-block h-4 w-4" />
             Manuscript
           </span>
@@ -1065,7 +1064,7 @@ export default function Typesetter() {
         </div>
         <textarea
           className="flex-1 resize-none border-none p-4 font-mono text-sm outline-none"
-          style={{ background: '#f7f5f1', color: '#333', lineHeight: 1.7 }}
+          style={{ background: 'rgba(255,255,255,0.02)', color: '#e8e4df', lineHeight: 1.7 }}
           value={manuscript}
           onChange={(e) => setManuscript(e.target.value)}
           placeholder="Paste your manuscript here. Use # Chapter Title to mark chapters."
@@ -1073,51 +1072,51 @@ export default function Typesetter() {
         />
         <div
           className="flex items-center justify-between border-t px-4 py-1.5 text-xs"
-          style={{ borderColor: '#e0d9cf', background: '#f5f2ed', color: '#6b5f4f' }}
+          style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)', color: '#5a5560' }}
         >
           <span>
             {wordCount.toLocaleString()} words · {charCount.toLocaleString()} characters
           </span>
-          <span>Use <code className="rounded px-1" style={{ background: '#e8e4de' }}>
+          <span>Use <code className="rounded px-1" style={{ background: 'rgba(255,255,255,0.08)' }}>
             # Title
           </code> for chapters</span>
         </div>
       </div>
 
       {/* ── Right: Page Preview ── */}
-      <div className="flex w-[420px] flex-shrink-0 flex-col" style={{ background: '#e8e4de' }}>
+      <div className="flex w-[420px] flex-shrink-0 flex-col" style={{ background: '#0c0c12' }}>
         {/* Preview toolbar */}
         <div
           className="flex items-center justify-between border-b px-3 py-2"
-          style={{ borderColor: '#d9cfc0', background: '#f5f2ed' }}
+          style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)' }}
         >
-          <span className="text-sm font-semibold" style={{ color: '#2c2416', fontFamily: '"EB Garamond", serif' }}>
+          <span className="text-sm font-semibold" style={{ color: '#e8e4df', fontFamily: '"Cormorant Garamond", serif' }}>
             Preview
           </span>
           <div className="flex items-center gap-2">
             <button
               className="rounded p-1"
-              style={{ background: !twoPageView ? '#e0d9cf' : 'transparent' }}
+              style={{ background: !twoPageView ? 'rgba(196,149,106,0.15)' : 'transparent' }}
               onClick={() => setTwoPageView(false)}
               title="Single page"
             >
-              <FileText className="h-4 w-4" style={{ color: '#6b5f4f' }} />
+              <FileText className="h-4 w-4" style={{ color: '#8a8490' }} />
             </button>
             <button
               className="rounded p-1"
-              style={{ background: twoPageView ? '#e0d9cf' : 'transparent' }}
+              style={{ background: twoPageView ? 'rgba(196,149,106,0.15)' : 'transparent' }}
               onClick={() => setTwoPageView(true)}
               title="Two-page spread"
             >
-              <Columns2 className="h-4 w-4" style={{ color: '#6b5f4f' }} />
+              <Columns2 className="h-4 w-4" style={{ color: '#8a8490' }} />
             </button>
           </div>
         </div>
 
         {/* Pages */}
-        <div className="flex flex-1 items-center justify-center overflow-auto p-4" style={{ background: '#e8e4de' }}>
+        <div className="flex flex-1 items-center justify-center overflow-auto p-4" style={{ background: '#0c0c12' }}>
           {pages.length === 0 ? (
-            <p className="text-sm" style={{ color: '#a89f94' }}>Enter text to see preview</p>
+            <p className="text-sm" style={{ color: '#5a5560' }}>Enter text to see preview</p>
           ) : twoPageView ? (
             <div className="flex gap-2">
               {renderPage(
@@ -1137,7 +1136,7 @@ export default function Typesetter() {
         {/* Page navigation */}
         <div
           className="flex items-center justify-center gap-4 border-t px-3 py-2"
-          style={{ borderColor: '#d9cfc0', background: '#f5f2ed' }}
+          style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)' }}
         >
           <Button
             size="sm"
@@ -1147,7 +1146,7 @@ export default function Typesetter() {
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-xs" style={{ color: '#6b5f4f' }}>
+          <span className="text-xs" style={{ color: '#5a5560' }}>
             Page {currentPageIndex + 1} of {pages.length}
           </span>
           <Button
@@ -1163,9 +1162,9 @@ export default function Typesetter() {
         {/* Export footer */}
         <div
           className="space-y-2 border-t px-4 py-3"
-          style={{ borderColor: '#d9cfc0', background: '#f5f2ed' }}
+          style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)' }}
         >
-          <div className="flex justify-between text-xs" style={{ color: '#6b5f4f' }}>
+          <div className="flex justify-between text-xs" style={{ color: '#5a5560' }}>
             <span>{pages.length} pages · est. spine {formatDim(spine, settings.unit)}</span>
             <span>
               {formatDim(trimW, settings.unit)} × {formatDim(trimH, settings.unit)}
@@ -1189,8 +1188,7 @@ export default function Typesetter() {
             </Select>
             <Button
               size="sm"
-              className="text-xs"
-              style={{ background: '#8b6914', color: '#fff' }}
+              className="bk-btn-accent text-xs"
               onClick={exportPDF}
             >
               <Download className="mr-1 h-3 w-3" />
