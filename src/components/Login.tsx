@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
-
+import { useTheme } from '../lib/theme';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Sun, Moon } from 'lucide-react';
 
 type AuthMode = 'signin' | 'signup';
 
 export default function Login() {
   const { login, signup } = useStore();
+  const { theme, toggleTheme } = useTheme();
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,10 +48,20 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden" style={{ backgroundColor: '#08080d' }}>
+    <div className="relative min-h-screen w-full overflow-hidden" style={{ backgroundColor: 'var(--bk-bg)' }}>
       {/* Aurora background with noise */}
       <div className="bk-aurora absolute inset-0 z-0"></div>
       <div className="bk-noise absolute inset-0 z-1 opacity-5"></div>
+
+      {/* Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        className="bk-theme-toggle"
+        style={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      </button>
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@400;500&display=swap');
@@ -80,33 +91,33 @@ export default function Login() {
         }
 
         .bk-glass-strong {
-          background: rgba(14, 12, 20, 0.7);
+          background: var(--bk-login-surface);
           backdrop-filter: blur(24px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid var(--bk-border-strong);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
                       inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
         .bk-glass-input {
-          background: rgba(30, 25, 40, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          background: var(--bk-login-input);
+          border: 1px solid var(--bk-border);
           backdrop-filter: blur(16px);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .bk-glass-input:focus,
         .bk-glass-input:focus-visible {
-          background: rgba(40, 35, 50, 0.8);
-          border-color: rgba(196, 149, 106, 0.4);
+          background: var(--bk-login-input-focus);
+          border-color: var(--bk-accent-border-strong);
           box-shadow: 0 0 20px rgba(196, 149, 106, 0.2),
                       inset 0 0 10px rgba(196, 149, 106, 0.05);
           outline: none;
         }
 
         .bk-btn-accent {
-          background: linear-gradient(135deg, rgba(196, 149, 106, 0.9) 0%, rgba(196, 149, 106, 0.8) 100%);
+          background: var(--bk-accent);
           border: 1px solid rgba(196, 149, 106, 0.3);
-          color: #08080d;
+          color: var(--bk-bg);
           font-weight: 500;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 4px 15px rgba(196, 149, 106, 0.25),
@@ -114,7 +125,7 @@ export default function Login() {
         }
 
         .bk-btn-accent:hover:not(:disabled) {
-          background: linear-gradient(135deg, rgba(196, 149, 106, 1) 0%, rgba(196, 149, 106, 0.9) 100%);
+          background: var(--bk-accent-hover);
           box-shadow: 0 6px 25px rgba(196, 149, 106, 0.35),
                       inset 0 1px 1px rgba(255, 255, 255, 0.15);
           transform: translateY(-1px);
@@ -128,7 +139,7 @@ export default function Login() {
         .bk-btn-ghost {
           background: rgba(255, 255, 255, 0.04);
           border: 1px solid rgba(196, 149, 106, 0.2);
-          color: #c4956a;
+          color: var(--bk-accent);
           font-weight: 400;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(8px);
@@ -148,7 +159,7 @@ export default function Login() {
         .bk-divider {
           width: 3px;
           height: 40px;
-          background: linear-gradient(180deg, transparent 0%, rgba(196, 149, 106, 0.3) 50%, transparent 100%);
+          background: linear-gradient(180deg, transparent 0%, var(--bk-accent-border-strong) 50%, transparent 100%);
           margin: 1.5rem auto;
         }
 
@@ -179,6 +190,24 @@ export default function Login() {
           50% { filter: drop-shadow(0 0 25px rgba(196, 149, 106, 0.6)); }
         }
 
+        .bk-theme-toggle {
+          background: transparent;
+          border: 1px solid var(--bk-border);
+          color: var(--bk-text);
+          padding: 8px;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .bk-theme-toggle:hover {
+          background: var(--bk-border-strong);
+          border-color: var(--bk-accent);
+        }
+
         .stagger-1 { animation-delay: 0.1s; }
         .stagger-2 { animation-delay: 0.2s; }
         .stagger-3 { animation-delay: 0.3s; }
@@ -195,7 +224,7 @@ export default function Login() {
               {/* Book Icon with Glow */}
               <div className="flex justify-center mb-8 bk-animate-in stagger-2">
                 <div className="book-glow">
-                  <BookOpen size={80} color="#c4956a" strokeWidth={1.2} />
+                  <BookOpen size={80} color="var(--bk-accent)" strokeWidth={1.2} />
                 </div>
               </div>
 
@@ -205,7 +234,7 @@ export default function Login() {
                 style={{
                   fontFamily: 'Cormorant Garamond, serif',
                   fontWeight: 300,
-                  color: '#e8e4df',
+                  color: 'var(--bk-text)',
                   letterSpacing: '0.05em'
                 }}
               >
@@ -223,13 +252,13 @@ export default function Login() {
                   className="italic text-lg leading-relaxed mb-4"
                   style={{
                     fontFamily: 'Cormorant Garamond, serif',
-                    color: '#a89d95',
+                    color: 'var(--bk-text-quote)',
                     fontWeight: 300
                   }}
                 >
                   "A room without books is like a body without a soul."
                 </p>
-                <footer className="text-sm" style={{ color: '#8a8490' }}>
+                <footer className="text-sm" style={{ color: 'var(--bk-text-secondary)' }}>
                   — Cicero
                 </footer>
               </blockquote>
@@ -249,7 +278,7 @@ export default function Login() {
               style={{
                 fontFamily: 'Cormorant Garamond, serif',
                 fontWeight: 300,
-                color: '#e8e4df',
+                color: 'var(--bk-text)',
                 letterSpacing: '0.02em'
               }}
             >
@@ -264,7 +293,7 @@ export default function Login() {
                     htmlFor="name"
                     style={{
                       fontFamily: 'DM Sans, sans-serif',
-                      color: '#8a8490',
+                      color: 'var(--bk-text-secondary)',
                       fontSize: '14px',
                       fontWeight: 500,
                       display: 'block',
@@ -283,7 +312,7 @@ export default function Login() {
                     className="w-full bk-glass-input rounded-lg px-4 py-3 text-base"
                     style={{
                       fontFamily: 'DM Sans, sans-serif',
-                      color: '#e8e4df'
+                      color: 'var(--bk-text)'
                     }}
                   />
                 </div>
@@ -295,7 +324,7 @@ export default function Login() {
                   htmlFor="email"
                   style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    color: '#8a8490',
+                    color: 'var(--bk-text-secondary)',
                     fontSize: '14px',
                     fontWeight: 500,
                     display: 'block',
@@ -314,7 +343,7 @@ export default function Login() {
                   className="w-full bk-glass-input rounded-lg px-4 py-3 text-base"
                   style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    color: '#e8e4df'
+                    color: 'var(--bk-text)'
                   }}
                 />
               </div>
@@ -325,7 +354,7 @@ export default function Login() {
                   htmlFor="password"
                   style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    color: '#8a8490',
+                    color: 'var(--bk-text-secondary)',
                     fontSize: '14px',
                     fontWeight: 500,
                     display: 'block',
@@ -344,7 +373,7 @@ export default function Login() {
                   className="w-full bk-glass-input rounded-lg px-4 py-3 text-base"
                   style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    color: '#e8e4df'
+                    color: 'var(--bk-text)'
                   }}
                 />
               </div>
@@ -354,10 +383,10 @@ export default function Login() {
                 <div
                   className="rounded-lg p-4 text-sm bk-glass-strong"
                   style={{
-                    border: '1px solid rgba(220, 80, 100, 0.3)',
-                    color: '#ff6b7a',
+                    border: '1px solid var(--bk-error-border)',
+                    color: 'var(--bk-error)',
                     fontFamily: 'DM Sans, sans-serif',
-                    backgroundColor: 'rgba(220, 80, 100, 0.08)'
+                    backgroundColor: 'var(--bk-error-bg)'
                   }}
                 >
                   {error}
@@ -381,7 +410,7 @@ export default function Login() {
                 style={{
                   width: '100%',
                   height: '1px',
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(196, 149, 106, 0.1) 50%, transparent 100%)'
+                  background: 'linear-gradient(90deg, transparent 0%, var(--bk-border) 50%, transparent 100%)'
                 }}
               ></div>
             </div>
@@ -404,7 +433,7 @@ export default function Login() {
                 <p
                   style={{
                     fontFamily: 'DM Sans, sans-serif',
-                    color: '#8a8490',
+                    color: 'var(--bk-text-secondary)',
                     fontSize: '14px'
                   }}
                 >
@@ -419,7 +448,7 @@ export default function Login() {
                       setPassword('');
                     }}
                     className="font-medium transition-colors hover:opacity-80"
-                    style={{ color: '#c4956a' }}
+                    style={{ color: 'var(--bk-accent)' }}
                   >
                     {mode === 'signin' ? 'Sign Up' : 'Sign In'}
                   </button>

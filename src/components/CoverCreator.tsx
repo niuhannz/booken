@@ -528,11 +528,11 @@ export default function CoverCreator() {
   );
 
   return (
-    <div className="flex h-screen flex-col bg-[#08080d]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="flex h-screen flex-col" style={{ background: 'var(--bk-bg)', fontFamily: "'DM Sans', sans-serif" }}>
       <div className="flex flex-1 gap-4 overflow-hidden p-4">
         {/* Left Panel - Settings */}
         <div className="w-80 overflow-y-auto rounded-xl bk-glass-strong p-6">
-          <h1 className="mb-6 text-2xl font-bold text-[#e8e4df] bk-display" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+          <h1 className="mb-6 text-2xl font-bold bk-display" style={{ color: 'var(--bk-text)', fontFamily: '"Cormorant Garamond", serif' }}>
             Cover Creator
           </h1>
 
@@ -546,7 +546,7 @@ export default function CoverCreator() {
             {/* Dimensions Tab */}
             <TabsContent value="dimensions" className="space-y-6">
               <div className="space-y-3">
-                <Label htmlFor="trim-size" className="text-sm font-semibold text-[#8a8490]">
+                <Label htmlFor="trim-size" className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>
                   Trim Size
                 </Label>
                 <Select value={state.selectedTrimSize || ''} onValueChange={handleTrimSizeChange}>
@@ -557,7 +557,7 @@ export default function CoverCreator() {
                     <SelectItem value="Custom">Custom</SelectItem>
                     {Object.entries(groupedTrimSizes).map(([category, sizes]) => (
                       <div key={category}>
-                        <div className="px-2 py-1.5 text-xs font-semibold text-[#5a5560]">
+                        <div className="px-2 py-1.5 text-xs font-semibold" style={{ color: 'var(--bk-text-muted)' }}>
                           {category}
                         </div>
                         {sizes.map((size) => (
@@ -575,7 +575,7 @@ export default function CoverCreator() {
                 <div className="space-y-3 rounded-lg bk-glass p-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label htmlFor="custom-width" className="text-xs text-[#8a8490]">
+                      <Label htmlFor="custom-width" className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>
                         Width
                       </Label>
                       <Input
@@ -588,7 +588,7 @@ export default function CoverCreator() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="custom-height" className="text-xs text-[#8a8490]">
+                      <Label htmlFor="custom-height" className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>
                         Height
                       </Label>
                       <Input
@@ -605,7 +605,7 @@ export default function CoverCreator() {
               )}
 
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-[#8a8490]">Unit</Label>
+                <Label className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>Unit</Label>
                 <div className="flex gap-2">
                   <Button
                     variant={state.unit === 'in' ? 'default' : 'outline'}
@@ -627,7 +627,7 @@ export default function CoverCreator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="page-count" className="text-sm font-semibold text-[#8a8490]">
+                <Label htmlFor="page-count" className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>
                   Page Count
                 </Label>
                 <Input
@@ -645,7 +645,7 @@ export default function CoverCreator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="paper-stock" className="text-sm font-semibold text-[#8a8490]">
+                <Label htmlFor="paper-stock" className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>
                   Paper Stock
                 </Label>
                 <Select value={state.selectedPaperStock} onValueChange={(value) =>
@@ -659,7 +659,7 @@ export default function CoverCreator() {
                       <SelectItem key={stock.name} value={stock.name}>
                         <div>
                           <div className="font-medium">{stock.name}</div>
-                          <div className="text-xs text-[#5a5560]">{stock.description}</div>
+                          <div className="text-xs" style={{ color: 'var(--bk-text-muted)' }}>{stock.description}</div>
                         </div>
                       </SelectItem>
                     ))}
@@ -668,7 +668,7 @@ export default function CoverCreator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bleed" className="text-sm font-semibold text-[#8a8490]">
+                <Label htmlFor="bleed" className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>
                   Bleed Amount ({state.unit === 'in' ? '"' : 'mm'})
                 </Label>
                 <Input
@@ -692,16 +692,16 @@ export default function CoverCreator() {
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-[#8a8490]">Spine Width:</span>
-                    <span className="font-semibold text-[#e8e4df]">{displayDim(dimensions.spineWidth)}</span>
+                    <span style={{ color: 'var(--bk-text-secondary)' }}>Spine Width:</span>
+                    <span className="font-semibold" style={{ color: 'var(--bk-text)' }}>{displayDim(dimensions.spineWidth)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8a8490]">Full Cover Width:</span>
-                    <span className="font-semibold text-[#e8e4df]">{displayDim(dimensions.fullWidth)}</span>
+                    <span style={{ color: 'var(--bk-text-secondary)' }}>Full Cover Width:</span>
+                    <span className="font-semibold" style={{ color: 'var(--bk-text)' }}>{displayDim(dimensions.fullWidth)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8a8490]">Full Cover Height:</span>
-                    <span className="font-semibold text-[#e8e4df]">{displayDim(dimensions.fullHeight)}</span>
+                    <span style={{ color: 'var(--bk-text-secondary)' }}>Full Cover Height:</span>
+                    <span className="font-semibold" style={{ color: 'var(--bk-text)' }}>{displayDim(dimensions.fullHeight)}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -710,7 +710,7 @@ export default function CoverCreator() {
             {/* Text Layers Tab */}
             <TabsContent value="text" className="space-y-4">
               <div className="space-y-3">
-                <Label className="text-sm font-semibold text-[#8a8490]">Preset Layers</Label>
+                <Label className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>Preset Layers</Label>
                 <div className="space-y-2">
                   <Button
                     variant="outline"
@@ -762,9 +762,9 @@ export default function CoverCreator() {
                 </div>
               </div>
 
-              <div className="border-t border-[rgba(255,255,255,0.06)] pt-4">
+              <div style={{ borderTop: '1px solid var(--bk-border)', paddingTop: '1rem' }}>
                 <div className="mb-3 flex items-center justify-between">
-                  <Label className="text-sm font-semibold text-[#8a8490]">Text Layers</Label>
+                  <Label className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>Text Layers</Label>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -776,14 +776,14 @@ export default function CoverCreator() {
 
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {textLayers.length === 0 ? (
-                    <p className="text-xs text-[#5a5560] italic">No text layers. Click the + button to add one.</p>
+                    <p className="text-xs italic" style={{ color: 'var(--bk-text-muted)' }}>No text layers. Click the + button to add one.</p>
                   ) : (
                     textLayers.map((layer) => (
                       <Card key={layer.id} className="bk-glass">
                         <CardContent className="pt-4 space-y-3">
                           {/* Text input */}
                           <div>
-                            <Label className="text-xs text-[#8a8490]">Text</Label>
+                            <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>Text</Label>
                             <Input
                               type="text"
                               value={layer.text}
@@ -795,7 +795,7 @@ export default function CoverCreator() {
 
                           {/* Font family */}
                           <div>
-                            <Label className="text-xs text-[#8a8490]">Font</Label>
+                            <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>Font</Label>
                             <Select
                               value={layer.fontFamily}
                               onValueChange={(value) => updateTextLayer(layer.id, { fontFamily: value })}
@@ -815,7 +815,7 @@ export default function CoverCreator() {
 
                           {/* Font size */}
                           <div>
-                            <Label className="text-xs text-[#8a8490]">
+                            <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>
                               Size: {layer.fontSize}pt
                             </Label>
                             <Slider
@@ -830,7 +830,7 @@ export default function CoverCreator() {
 
                           {/* Color picker */}
                           <div>
-                            <Label className="text-xs text-[#8a8490]">Color</Label>
+                            <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>Color</Label>
                             <input
                               type="color"
                               value={layer.color}
@@ -841,7 +841,7 @@ export default function CoverCreator() {
 
                           {/* Bold and Italic toggles */}
                           <div className="flex gap-2">
-                            <label className="flex items-center gap-2 text-xs text-[#e8e4df]">
+                            <label className="flex items-center gap-2 text-xs" style={{ color: 'var(--bk-text)' }}>
                               <Checkbox
                                 checked={layer.bold}
                                 onCheckedChange={(checked) =>
@@ -850,7 +850,7 @@ export default function CoverCreator() {
                               />
                               Bold
                             </label>
-                            <label className="flex items-center gap-2 text-xs text-[#e8e4df]">
+                            <label className="flex items-center gap-2 text-xs" style={{ color: 'var(--bk-text)' }}>
                               <Checkbox
                                 checked={layer.italic}
                                 onCheckedChange={(checked) =>
@@ -863,7 +863,7 @@ export default function CoverCreator() {
 
                           {/* Alignment */}
                           <div>
-                            <Label className="text-xs text-[#8a8490]">Alignment</Label>
+                            <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>Alignment</Label>
                             <div className="flex gap-1">
                               <Button
                                 size="sm"
@@ -894,7 +894,7 @@ export default function CoverCreator() {
 
                           {/* X position */}
                           <div>
-                            <Label className="text-xs text-[#8a8490]">
+                            <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>
                               Horizontal: {Math.round(layer.x)}%
                             </Label>
                             <Slider
@@ -909,7 +909,7 @@ export default function CoverCreator() {
 
                           {/* Y position */}
                           <div>
-                            <Label className="text-xs text-[#8a8490]">
+                            <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>
                               Vertical: {Math.round(layer.y)}%
                             </Label>
                             <Slider
@@ -943,7 +943,7 @@ export default function CoverCreator() {
             {/* Image Tab */}
             <TabsContent value="generate" className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="api-key" className="text-sm font-semibold text-[#8a8490]">
+                <Label htmlFor="api-key" className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>
                   API Key
                 </Label>
                 <Input
@@ -961,7 +961,7 @@ export default function CoverCreator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="prompt" className="text-sm font-semibold text-[#8a8490]">
+                <Label htmlFor="prompt" className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>
                   Text Prompt
                 </Label>
                 <textarea
@@ -979,7 +979,7 @@ export default function CoverCreator() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="style" className="text-sm font-semibold text-[#8a8490]">
+                <Label htmlFor="style" className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>
                   Style
                 </Label>
                 <Select
@@ -1012,12 +1012,12 @@ export default function CoverCreator() {
                 {state.isGenerating ? 'Generating...' : 'Generate Image'}
               </Button>
 
-              <div className="text-xs text-[#5a5560]">
+              <div className="text-xs" style={{ color: 'var(--bk-text-muted)' }}>
                 Note: Image generation is a placeholder. Actual API integration can be added later.
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-[#8a8490]">Or Upload Image</Label>
+                <Label className="text-sm font-semibold" style={{ color: 'var(--bk-text-secondary)' }}>Or Upload Image</Label>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -1041,7 +1041,7 @@ export default function CoverCreator() {
         {/* Center - Canvas Preview */}
         <div className="flex flex-1 flex-col rounded-xl bk-glass p-4">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-[#e8e4df] bk-display" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+            <h2 className="text-lg font-semibold bk-display" style={{ color: 'var(--bk-text)', fontFamily: '"Cormorant Garamond", serif' }}>
               Preview
             </h2>
             <div className="flex items-center gap-2">
@@ -1069,7 +1069,7 @@ export default function CoverCreator() {
               >
                 <ZoomOut className="h-4 w-4" />
               </Button>
-              <span className="w-12 text-center text-sm text-[#e8e4df]">{state.zoomLevel}%</span>
+              <span className="w-12 text-center text-sm" style={{ color: 'var(--bk-text)' }}>{state.zoomLevel}%</span>
               <Button
                 size="sm"
                 variant="secondary"
@@ -1096,7 +1096,7 @@ export default function CoverCreator() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-4">
-            <label className="flex items-center gap-2 text-sm text-[#e8e4df]">
+            <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--bk-text)' }}>
               <Checkbox
                 checked={state.showBleeds}
                 onCheckedChange={(checked) =>
@@ -1108,7 +1108,7 @@ export default function CoverCreator() {
               />
               Show Bleeds
             </label>
-            <label className="flex items-center gap-2 text-sm text-[#e8e4df]">
+            <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--bk-text)' }}>
               <Checkbox
                 checked={state.showSafeZone}
                 onCheckedChange={(checked) =>
@@ -1120,7 +1120,7 @@ export default function CoverCreator() {
               />
               Show Safe Zone
             </label>
-            <label className="flex items-center gap-2 text-sm text-[#e8e4df]">
+            <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--bk-text)' }}>
               <Checkbox
                 checked={state.showLabels}
                 onCheckedChange={(checked) =>
@@ -1137,9 +1137,9 @@ export default function CoverCreator() {
       </div>
 
       {/* Bottom - Export Section */}
-      <div className="border-t border-[rgba(255,255,255,0.06)] bk-glass px-4 py-4">
+      <div style={{ borderTop: '1px solid var(--bk-border)' }} className="bk-glass px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm text-[#8a8490] bk-ui" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
+          <div className="text-sm bk-ui" style={{ color: 'var(--bk-text-secondary)', fontFamily: '"Cormorant Garamond", serif' }}>
             <span className="font-semibold">Full Dimensions: </span>
             {displayDim(dimensions.fullWidth)} × {displayDim(dimensions.fullHeight)}
           </div>

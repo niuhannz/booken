@@ -94,22 +94,22 @@ export default function Bookshelf() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#08080d' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bk-bg)' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Cormorant+Garamond:wght@300;400;500&display=swap');
 
         .bk-glass {
-          background: rgba(17, 17, 24, 0.4);
+          background: var(--bk-card-surface);
           backdrop-filter: blur(10px);
-          border: 1px solid rgba(200, 200, 208, 0.1);
+          border: 1px solid var(--bk-card-border);
           border-radius: 0.75rem;
         }
 
         .bk-glass-input {
-          background: rgba(17, 17, 24, 0.5);
+          background: var(--bk-card-surface-strong);
           backdrop-filter: blur(8px);
-          border: 1px solid rgba(200, 200, 208, 0.12);
-          color: #e8e4df;
+          border: 1px solid var(--bk-card-border-strong);
+          color: var(--bk-text);
           font-family: 'DM Sans', sans-serif;
           border-radius: 0.5rem;
           padding: 0.75rem 1rem;
@@ -117,19 +117,19 @@ export default function Bookshelf() {
         }
 
         .bk-glass-input::placeholder {
-          color: #8a8490;
+          color: var(--bk-text-secondary);
         }
 
         .bk-glass-input:focus {
           outline: none;
-          border-color: rgba(196, 149, 106, 0.4);
-          background: rgba(17, 17, 24, 0.6);
-          box-shadow: 0 0 20px rgba(196, 149, 106, 0.15);
+          border-color: var(--bk-accent-border-strong);
+          background: var(--bk-card-surface-hover);
+          box-shadow: 0 0 20px var(--bk-shadow-accent);
         }
 
         .bk-btn-accent {
-          background: linear-gradient(135deg, #c4956a 0%, #b8854f 100%);
-          color: #08080d;
+          background: linear-gradient(135deg, var(--bk-accent) 0%, var(--bk-accent-hover) 100%);
+          color: var(--bk-bg);
           font-family: 'DM Sans', sans-serif;
           font-weight: 500;
           border: none;
@@ -143,7 +143,7 @@ export default function Bookshelf() {
         }
 
         .bk-btn-accent:hover {
-          box-shadow: 0 8px 24px rgba(196, 149, 106, 0.3);
+          box-shadow: 0 8px 24px var(--bk-accent-border);
           transform: translateY(-2px);
         }
 
@@ -155,10 +155,10 @@ export default function Bookshelf() {
 
         .bk-btn-ghost {
           background: transparent;
-          color: #e8e4df;
+          color: var(--bk-text);
           font-family: 'DM Sans', sans-serif;
           font-weight: 500;
-          border: 1px solid rgba(200, 200, 208, 0.15);
+          border: 1px solid var(--bk-card-border);
           border-radius: 0.5rem;
           padding: 0.625rem 1.25rem;
           cursor: pointer;
@@ -166,8 +166,8 @@ export default function Bookshelf() {
         }
 
         .bk-btn-ghost:hover {
-          background: rgba(17, 17, 24, 0.6);
-          border-color: rgba(200, 200, 208, 0.25);
+          background: var(--bk-card-surface-hover);
+          border-color: var(--bk-card-border-strong);
         }
 
         .bk-card-hover {
@@ -175,9 +175,9 @@ export default function Bookshelf() {
         }
 
         .bk-card-hover:hover {
-          border-color: rgba(196, 149, 106, 0.25);
-          background: rgba(17, 17, 24, 0.6);
-          box-shadow: 0 8px 32px rgba(196, 149, 106, 0.1), 0 0 1px rgba(196, 149, 106, 0.15);
+          border-color: var(--bk-accent-border);
+          background: var(--bk-card-surface-hover);
+          box-shadow: 0 8px 32px var(--bk-accent-bg), 0 0 1px var(--bk-shadow-accent);
           transform: translateY(-4px);
         }
 
@@ -200,7 +200,7 @@ export default function Bookshelf() {
         .decorative-divider {
           width: 100%;
           height: 1px;
-          background: linear-gradient(90deg, transparent 0%, rgba(200, 200, 208, 0.1) 50%, transparent 100%);
+          background: linear-gradient(90deg, transparent 0%, var(--bk-card-border) 50%, transparent 100%);
           margin: 2rem 0;
         }
 
@@ -208,7 +208,7 @@ export default function Bookshelf() {
           font-family: 'Cormorant Garamond', serif;
           font-size: 1.5rem;
           font-weight: 400;
-          color: #e8e4df;
+          color: var(--bk-text);
           margin-bottom: 0.5rem;
           letter-spacing: -0.5px;
         }
@@ -216,7 +216,7 @@ export default function Bookshelf() {
         .project-card-author {
           font-family: 'DM Sans', sans-serif;
           font-size: 0.875rem;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           margin-bottom: 1rem;
           font-weight: 400;
         }
@@ -227,20 +227,20 @@ export default function Bookshelf() {
           margin-bottom: 1rem;
           font-family: 'DM Sans', sans-serif;
           font-size: 0.8125rem;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           flex-wrap: wrap;
         }
 
         .version-badge {
           display: inline-block;
-          background: rgba(196, 149, 106, 0.12);
-          color: #c4956a;
+          background: var(--bk-accent-bg);
+          color: var(--bk-accent);
           padding: 0.375rem 0.875rem;
           border-radius: 12px;
           font-family: 'DM Sans', sans-serif;
           font-size: 0.75rem;
           font-weight: 500;
-          border: 1px solid rgba(196, 149, 106, 0.2);
+          border: 1px solid var(--bk-accent-border);
           backdrop-filter: blur(4px);
           margin-bottom: 1rem;
         }
@@ -251,14 +251,14 @@ export default function Bookshelf() {
         }
 
         .empty-state-icon {
-          color: #5a5560;
+          color: var(--bk-text-muted);
           margin: 0 auto 2rem;
           opacity: 0.6;
         }
 
         .empty-state-text {
           font-family: 'Cormorant Garamond', serif;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           font-size: 1.25rem;
           line-height: 1.6;
           margin-bottom: 1.5rem;
@@ -267,23 +267,23 @@ export default function Bookshelf() {
         }
 
         .version-history-item {
-          background: rgba(17, 17, 24, 0.3);
-          border: 1px solid rgba(200, 200, 208, 0.08);
+          background: var(--bk-card-surface);
+          border: 1px solid var(--bk-border);
           border-radius: 0.5rem;
           padding: 0.75rem;
           font-family: 'DM Sans', sans-serif;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           font-size: 0.8rem;
           transition: all 0.2s ease;
         }
 
         .version-history-item:hover {
-          background: rgba(17, 17, 24, 0.5);
-          border-color: rgba(200, 200, 208, 0.12);
+          background: var(--bk-card-surface-strong);
+          border-color: var(--bk-card-border-strong);
         }
 
         .version-history-label {
-          color: #c4956a;
+          color: var(--bk-accent);
           font-weight: 500;
           display: flex;
           align-items: center;
@@ -294,32 +294,32 @@ export default function Bookshelf() {
         .glass-dialog-content {
           background: rgba(17, 17, 24, 0.7);
           backdrop-filter: blur(16px);
-          border: 1px solid rgba(200, 200, 208, 0.15);
-          color: #e8e4df;
+          border: 1px solid var(--bk-card-border);
+          color: var(--bk-text);
         }
 
         .glass-dialog-header {
-          border-bottom: 1px solid rgba(200, 200, 208, 0.1);
+          border-bottom: 1px solid var(--bk-card-border);
         }
 
         .glass-dialog-title {
           font-family: 'Cormorant Garamond', serif;
           font-size: 1.875rem;
           font-weight: 400;
-          color: #e8e4df;
+          color: var(--bk-text);
           letter-spacing: -0.5px;
         }
 
         .glass-dialog-description {
           font-family: 'DM Sans', sans-serif;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           font-size: 0.9375rem;
         }
 
         .spine-width-pill {
-          background: rgba(196, 149, 106, 0.1);
-          border: 1px solid rgba(196, 149, 106, 0.2);
-          color: #c4956a;
+          background: var(--bk-accent-bg);
+          border: 1px solid var(--bk-accent-border);
+          color: var(--bk-accent);
           font-family: 'DM Sans', sans-serif;
           font-size: 0.8125rem;
           font-weight: 500;
@@ -331,14 +331,14 @@ export default function Bookshelf() {
         }
 
         .header-glass-panel {
-          background: rgba(17, 17, 24, 0.3);
+          background: var(--bk-card-surface);
           backdrop-filter: blur(8px);
-          border-bottom: 1px solid rgba(200, 200, 208, 0.1);
+          border-bottom: 1px solid var(--bk-card-border);
         }
 
         .welcome-text {
           font-family: 'DM Sans', sans-serif;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           font-size: 0.9375rem;
           font-weight: 400;
           letter-spacing: 0.3px;
@@ -348,14 +348,14 @@ export default function Bookshelf() {
           font-family: 'Cormorant Garamond', serif;
           font-size: 3.75rem;
           font-weight: 300;
-          color: #e8e4df;
+          color: var(--bk-text);
           letter-spacing: -1px;
           margin-top: 0.5rem;
         }
 
         .action-button-small {
-          background: linear-gradient(135deg, #c4956a 0%, #b8854f 100%);
-          color: #08080d;
+          background: linear-gradient(135deg, var(--bk-accent) 0%, var(--bk-accent-hover) 100%);
+          color: var(--bk-bg);
           font-family: 'DM Sans', sans-serif;
           font-weight: 500;
           font-size: 0.8125rem;
@@ -371,14 +371,14 @@ export default function Bookshelf() {
         }
 
         .action-button-small:hover {
-          box-shadow: 0 6px 20px rgba(196, 149, 106, 0.25);
+          box-shadow: 0 6px 20px var(--bk-accent-border);
           transform: translateY(-1px);
         }
 
         .delete-button-glass {
           background: transparent;
-          border: 1px solid rgba(200, 200, 208, 0.12);
-          color: #8a8490;
+          border: 1px solid var(--bk-card-border-strong);
+          color: var(--bk-text-secondary);
           border-radius: 0.375rem;
           padding: 0.5rem 0.625rem;
           cursor: pointer;
@@ -389,9 +389,9 @@ export default function Bookshelf() {
         }
 
         .delete-button-glass:hover {
-          color: #e05252;
-          border-color: rgba(224, 82, 82, 0.3);
-          background: rgba(224, 82, 82, 0.08);
+          color: var(--bk-delete);
+          border-color: var(--bk-delete-border);
+          background: var(--bk-delete-bg);
         }
 
         .card-grid {
@@ -468,7 +468,7 @@ export default function Bookshelf() {
                   <div>
                     <Label
                       htmlFor="project-title"
-                      style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
+                      style={{ fontFamily: 'DM Sans, sans-serif', color: 'var(--bk-text)', fontSize: '0.9375rem' }}
                     >
                       Book Title
                     </Label>
@@ -484,7 +484,7 @@ export default function Bookshelf() {
                   <div>
                     <Label
                       htmlFor="project-author"
-                      style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
+                      style={{ fontFamily: 'DM Sans, sans-serif', color: 'var(--bk-text)', fontSize: '0.9375rem' }}
                     >
                       Author Name
                     </Label>
@@ -542,7 +542,7 @@ export default function Bookshelf() {
                     <div>
                       <Label
                         htmlFor="project-title"
-                        style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
+                        style={{ fontFamily: 'DM Sans, sans-serif', color: 'var(--bk-text)', fontSize: '0.9375rem' }}
                       >
                         Book Title
                       </Label>
@@ -558,7 +558,7 @@ export default function Bookshelf() {
                     <div>
                       <Label
                         htmlFor="project-author"
-                        style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df', fontSize: '0.9375rem' }}
+                        style={{ fontFamily: 'DM Sans, sans-serif', color: 'var(--bk-text)', fontSize: '0.9375rem' }}
                       >
                         Author Name
                       </Label>
@@ -616,10 +616,10 @@ export default function Bookshelf() {
 
                   {/* Expanded Version History */}
                   {expandedProjectId === project.id && project.versions.length > 0 && (
-                    <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(200, 200, 208, 0.1)' }}>
+                    <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--bk-card-border)' }}>
                       <p
                         className="text-sm font-medium mb-3"
-                        style={{ fontFamily: 'DM Sans, sans-serif', color: '#e8e4df' }}
+                        style={{ fontFamily: 'DM Sans, sans-serif', color: 'var(--bk-text)' }}
                       >
                         Version History
                       </p>
@@ -677,8 +677,8 @@ export default function Bookshelf() {
                           <AlertDialogCancel
                             style={{
                               fontFamily: 'DM Sans, sans-serif',
-                              color: '#e8e4df',
-                              borderColor: 'rgba(200, 200, 208, 0.15)',
+                              color: 'var(--bk-text)',
+                              borderColor: 'var(--bk-card-border)',
                               background: 'transparent'
                             }}
                           >
@@ -688,8 +688,8 @@ export default function Bookshelf() {
                             onClick={() => handleDeleteProject(project.id)}
                             style={{
                               fontFamily: 'DM Sans, sans-serif',
-                              backgroundColor: '#e05252',
-                              color: '#ffffff',
+                              backgroundColor: 'var(--bk-delete)',
+                              color: 'var(--bk-text-heading)',
                               border: 'none'
                             }}
                           >

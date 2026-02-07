@@ -1,13 +1,15 @@
 import { useStore, StoreProvider } from './lib/store';
+import { ThemeProvider, useTheme } from './lib/theme';
 import Login from './components/Login';
 import Bookshelf from './components/Bookshelf';
 import CoverCreator from './components/CoverCreator';
 import Typesetter from './components/Typesetter';
 import Pricing from './components/Pricing';
-import { BookOpen, PenLine, Type, CreditCard, Library, LogOut } from 'lucide-react';
+import { BookOpen, PenLine, Type, CreditCard, Library, LogOut, Sun, Moon } from 'lucide-react';
 
 function AppInner() {
   const { view, setView, user, logout } = useStore();
+  const { theme, toggleTheme } = useTheme();
 
   if (view === 'login' || !user) {
     return <Login />;
@@ -20,16 +22,16 @@ function AppInner() {
   const showNav = view === 'bookshelf' || view === 'cover' || view === 'typeset';
 
   return (
-    <div className="flex h-screen flex-col bk-animate-in" style={{ background: '#08080d' }}>
+    <div className="flex h-screen flex-col bk-animate-in" style={{ background: 'var(--bk-bg)' }}>
       {/* ── Glass Morphism Nav ── */}
       {showNav && (
         <header
           className="bk-glass"
           style={{
             minHeight: 52,
-            background: 'rgba(255, 255, 255, 0.03)',
+            background: 'var(--bk-surface)',
             backdropFilter: 'blur(24px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+            borderBottom: '1px solid var(--bk-border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -42,11 +44,11 @@ function AppInner() {
             onClick={() => setView('bookshelf')}
             className="flex items-center gap-2 transition-all duration-300 hover:opacity-85 focus:outline-none"
           >
-            <BookOpen className="h-5 w-5 transition-transform hover:scale-110" style={{ color: '#c4956a' }} />
+            <BookOpen className="h-5 w-5 transition-transform hover:scale-110" style={{ color: 'var(--bk-accent)' }} />
             <span
               className="bk-display text-lg tracking-tight"
               style={{
-                color: '#ffffff',
+                color: 'var(--bk-text-heading)',
                 fontWeight: 300,
                 letterSpacing: '0.02em',
               }}
@@ -56,7 +58,7 @@ function AppInner() {
             <span
               className="bk-ui text-[10px] font-medium"
               style={{
-                color: '#c4956a',
+                color: 'var(--bk-accent)',
                 opacity: 0.7,
                 letterSpacing: '0.08em',
               }}
@@ -95,27 +97,40 @@ function AppInner() {
 
           {/* User Section */}
           <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="bk-theme-toggle"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </button>
+
             <div
               className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold bk-ui transition-all duration-300 ${
                 user.plan === 'pro' ? 'ring-2 ring-[#c4956a] ring-offset-2' : ''
               }`}
               style={{
-                background: '#c4956a',
-                color: '#08080d',
+                background: 'var(--bk-accent)',
+                color: 'var(--bk-text-on-accent)',
               }}
             >
               {user.avatar}
             </div>
-            <span className="hidden text-sm sm:block bk-ui" style={{ color: 'rgba(255, 255, 255, 0.65)' }}>
+            <span className="hidden text-sm sm:block bk-ui" style={{ color: 'var(--bk-nav-user)' }}>
               {user.name}
             </span>
             {user.plan === 'pro' && (
               <span
                 className="rounded px-1.5 py-0.5 text-[9px] font-semibold tracking-widest bk-ui transition-all duration-300"
                 style={{
-                  background: 'rgba(196, 149, 106, 0.12)',
-                  color: '#c4956a',
-                  border: '1px solid rgba(196, 149, 106, 0.35)',
+                  background: 'var(--bk-accent-bg)',
+                  color: 'var(--bk-accent)',
+                  border: '1px solid var(--bk-accent-border-strong)',
                   textTransform: 'uppercase',
                 }}
               >
@@ -124,10 +139,11 @@ function AppInner() {
             )}
             <button
               onClick={logout}
-              className="ml-1 rounded p-1.5 transition-all duration-300 hover:bg-white/8 focus:outline-none"
+              className="ml-1 rounded p-1.5 transition-all duration-300 focus:outline-none"
+              style={{ color: 'var(--bk-accent)' }}
               title="Sign out"
             >
-              <LogOut className="h-4 w-4 transition-transform hover:scale-110" style={{ color: 'rgba(196, 149, 106, 0.7)' }} />
+              <LogOut className="h-4 w-4 transition-transform hover:scale-110" style={{ opacity: 0.7 }} />
             </button>
           </div>
         </header>
@@ -157,12 +173,11 @@ function NavBtn({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all duration-300 bk-ui focus:outline-none relative ${
-        active ? 'text-white' : 'text-white/50 hover:text-white/75'
-      }`}
+      className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all duration-300 bk-ui focus:outline-none relative`}
       style={{
-        background: active ? 'rgba(196, 149, 106, 0.08)' : 'transparent',
+        background: active ? 'var(--bk-accent-bg-subtle)' : 'transparent',
         fontWeight: active ? 500 : 400,
+        color: active ? 'var(--bk-nav-text-active)' : 'var(--bk-nav-text)',
       }}
     >
       {icon}
@@ -171,8 +186,8 @@ function NavBtn({
         <div
           className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
           style={{
-            background: 'linear-gradient(90deg, transparent, #c4956a, transparent)',
-            boxShadow: '0 0 12px rgba(196, 149, 106, 0.6)',
+            background: 'linear-gradient(90deg, transparent, var(--bk-accent), transparent)',
+            boxShadow: '0 0 12px var(--bk-glow-bar)',
           }}
         />
       )}
@@ -182,8 +197,10 @@ function NavBtn({
 
 export default function App() {
   return (
-    <StoreProvider>
-      <AppInner />
-    </StoreProvider>
+    <ThemeProvider>
+      <StoreProvider>
+        <AppInner />
+      </StoreProvider>
+    </ThemeProvider>
   );
 }

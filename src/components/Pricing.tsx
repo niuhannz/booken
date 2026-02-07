@@ -72,21 +72,21 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#08080d' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bk-bg)' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&family=Spectral:wght@400;500;600&display=swap');
 
         /* Glass morphism utilities */
         .bk-glass {
-          background: rgba(232, 228, 223, 0.05);
+          background: var(--bk-pricing-surface);
           backdrop-filter: blur(20px);
-          border: 1px solid rgba(232, 228, 223, 0.1);
+          border: 1px solid var(--bk-pricing-border);
         }
 
         .bk-glass-strong {
-          background: rgba(232, 228, 223, 0.08);
+          background: var(--bk-pricing-surface-strong);
           backdrop-filter: blur(25px);
-          border: 1px solid rgba(232, 228, 223, 0.15);
+          border: 1px solid var(--bk-pricing-border-strong);
         }
 
         .bk-glow-accent {
@@ -98,7 +98,7 @@ export default function Pricing() {
         .bk-divider {
           width: 48px;
           height: 2px;
-          background: linear-gradient(90deg, transparent, #c4956a, transparent);
+          background: linear-gradient(90deg, transparent, var(--bk-accent), transparent);
           margin: 0 auto;
         }
 
@@ -115,14 +115,14 @@ export default function Pricing() {
           font-family: 'Cormorant Garamond', serif;
           font-size: 1.75rem;
           font-weight: 500;
-          color: #e8e4df;
+          color: var(--bk-text);
           letter-spacing: 0.05em;
         }
 
         .nav-btn-ghost {
           background: transparent;
           border: none;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           cursor: pointer;
           padding: 0.5rem;
           display: flex;
@@ -134,7 +134,7 @@ export default function Pricing() {
         }
 
         .nav-btn-ghost:hover {
-          color: #c4956a;
+          color: var(--bk-accent);
           transform: translateX(-2px);
         }
 
@@ -144,7 +144,7 @@ export default function Pricing() {
           font-size: 3.5rem;
           font-weight: 300;
           letter-spacing: -0.02em;
-          color: #e8e4df;
+          color: var(--bk-text);
           margin-bottom: 1.5rem;
           line-height: 1.1;
         }
@@ -181,29 +181,29 @@ export default function Pricing() {
         }
 
         .pricing-card-free {
-          background: rgba(232, 228, 223, 0.04);
+          background: var(--bk-pricing-surface);
           backdrop-filter: blur(20px);
-          border: 1px solid rgba(232, 228, 223, 0.08);
+          border: 1px solid var(--bk-pricing-surface-strong);
         }
 
         .pricing-card-pro {
-          background: rgba(232, 228, 223, 0.08);
+          background: var(--bk-pricing-surface-strong);
           backdrop-filter: blur(25px);
-          border: 1px solid rgba(196, 149, 106, 0.2);
+          border: 1px solid var(--bk-accent-border);
           transform: scale(1.02);
-          box-shadow: 0 0 50px rgba(196, 149, 106, 0.12),
+          box-shadow: 0 0 50px var(--bk-accent-bg),
                       inset 0 0 50px rgba(196, 149, 106, 0.04);
         }
 
         .pricing-card:hover {
-          border-color: rgba(232, 228, 223, 0.2);
-          background: rgba(232, 228, 223, 0.06);
+          border-color: var(--bk-pricing-border);
+          background: var(--bk-pricing-surface-strong);
           transform: translateY(-4px);
         }
 
         .pricing-card-pro:hover {
-          border-color: rgba(196, 149, 106, 0.3);
-          background: rgba(232, 228, 223, 0.1);
+          border-color: var(--bk-accent-border);
+          background: var(--bk-pricing-border);
           transform: scale(1.025) translateY(-4px);
           box-shadow: 0 0 60px rgba(196, 149, 106, 0.18),
                       inset 0 0 60px rgba(196, 149, 106, 0.06);
@@ -215,10 +215,10 @@ export default function Pricing() {
           top: -16px;
           left: 50%;
           transform: translateX(-50%);
-          background: linear-gradient(135deg, rgba(196, 149, 106, 0.3) 0%, rgba(196, 149, 106, 0.1) 100%);
+          background: linear-gradient(135deg, var(--bk-accent-border) 0%, rgba(196, 149, 106, 0.1) 100%);
           backdrop-filter: blur(20px);
-          border: 1px solid rgba(196, 149, 106, 0.4);
-          color: #c4956a;
+          border: 1px solid var(--bk-accent-border-strong);
+          color: var(--bk-accent);
           padding: 0.5rem 1.25rem;
           border-radius: 0.75rem;
           font-family: 'DM Sans', sans-serif;
@@ -236,7 +236,7 @@ export default function Pricing() {
           font-family: 'Cormorant Garamond', serif;
           font-size: 1.5rem;
           font-weight: 500;
-          color: #e8e4df;
+          color: var(--bk-text);
           margin-bottom: 0.75rem;
           letter-spacing: 0.02em;
         }
@@ -245,7 +245,7 @@ export default function Pricing() {
           font-family: 'Cormorant Garamond', serif;
           font-size: 3rem;
           font-weight: 300;
-          color: #c4956a;
+          color: var(--bk-accent);
           margin-bottom: 0.25rem;
           letter-spacing: -0.01em;
         }
@@ -253,14 +253,14 @@ export default function Pricing() {
         .plan-price-period {
           font-family: 'DM Sans', sans-serif;
           font-size: 0.875rem;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           margin-bottom: 1.5rem;
           font-weight: 400;
         }
 
         .plan-description {
           font-family: 'DM Sans', sans-serif;
-          color: #a89fa7;
+          color: var(--bk-text-secondary);
           font-size: 0.95rem;
           line-height: 1.6;
           margin-bottom: 2rem;
@@ -280,7 +280,7 @@ export default function Pricing() {
           padding: 0.75rem 0;
           font-family: 'DM Sans', sans-serif;
           font-size: 0.925rem;
-          border-bottom: 1px solid rgba(232, 228, 223, 0.05);
+          border-bottom: 1px solid var(--bk-pricing-surface);
           font-weight: 400;
         }
 
@@ -289,11 +289,11 @@ export default function Pricing() {
         }
 
         .feature-item.included {
-          color: #e8e4df;
+          color: var(--bk-text);
         }
 
         .feature-item.excluded {
-          color: #6a6270;
+          color: var(--bk-pricing-disabled);
         }
 
         .feature-icon {
@@ -302,7 +302,7 @@ export default function Pricing() {
         }
 
         .feature-icon-check {
-          color: #c4956a;
+          color: var(--bk-accent);
           width: 18px;
           height: 18px;
         }
@@ -310,8 +310,8 @@ export default function Pricing() {
         /* Buttons */
         .bk-btn-ghost {
           background: transparent;
-          border: 1px solid rgba(232, 228, 223, 0.2);
-          color: #e8e4df;
+          border: 1px solid var(--bk-pricing-border);
+          color: var(--bk-text);
           padding: 0.75rem 1.5rem;
           border-radius: 0.5rem;
           font-family: 'DM Sans', sans-serif;
@@ -323,20 +323,20 @@ export default function Pricing() {
         }
 
         .bk-btn-ghost:hover:not(:disabled) {
-          background: rgba(232, 228, 223, 0.08);
-          border-color: rgba(232, 228, 223, 0.3);
+          background: var(--bk-pricing-surface-strong);
+          border-color: var(--bk-pricing-border);
         }
 
         .bk-btn-ghost:disabled {
-          color: #8a8490;
-          border-color: rgba(232, 228, 223, 0.1);
+          color: var(--bk-text-secondary);
+          border-color: var(--bk-pricing-border);
           cursor: not-allowed;
         }
 
         .bk-btn-accent {
-          background: linear-gradient(135deg, rgba(196, 149, 106, 0.3) 0%, rgba(196, 149, 106, 0.15) 100%);
-          border: 1px solid rgba(196, 149, 106, 0.4);
-          color: #c4956a;
+          background: linear-gradient(135deg, var(--bk-accent-border) 0%, rgba(196, 149, 106, 0.15) 100%);
+          border: 1px solid var(--bk-accent-border-strong);
+          color: var(--bk-accent);
           padding: 0.75rem 1.5rem;
           border-radius: 0.5rem;
           font-family: 'DM Sans', sans-serif;
@@ -350,15 +350,15 @@ export default function Pricing() {
         }
 
         .bk-btn-accent:hover:not(:disabled) {
-          background: linear-gradient(135deg, rgba(196, 149, 106, 0.4) 0%, rgba(196, 149, 106, 0.25) 100%);
-          border-color: rgba(196, 149, 106, 0.6);
+          background: linear-gradient(135deg, var(--bk-accent-border-strong) 0%, var(--bk-accent-border) 100%);
+          border-color: var(--bk-accent-border-strong);
           box-shadow: 0 0 20px rgba(196, 149, 106, 0.2);
         }
 
         .bk-btn-accent:disabled {
           background: linear-gradient(135deg, rgba(138, 132, 144, 0.2) 0%, rgba(138, 132, 144, 0.1) 100%);
           border-color: rgba(138, 132, 144, 0.3);
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           cursor: not-allowed;
         }
 
@@ -367,21 +367,21 @@ export default function Pricing() {
           max-width: 50rem;
           margin: 0 auto;
           padding-top: 2rem;
-          border-top: 1px solid rgba(232, 228, 223, 0.1);
+          border-top: 1px solid var(--bk-pricing-border);
         }
 
         .faq-title {
           font-family: 'Cormorant Garamond', serif;
           font-size: 2.25rem;
           font-weight: 300;
-          color: #e8e4df;
+          color: var(--bk-text);
           text-align: center;
           margin-bottom: 1rem;
           letter-spacing: -0.01em;
         }
 
         .faq-item {
-          border-bottom: 1px solid rgba(232, 228, 223, 0.08);
+          border-bottom: 1px solid var(--bk-pricing-surface-strong);
           background: rgba(232, 228, 223, 0.02);
           border-radius: 0.5rem;
           margin-bottom: 0.75rem;
@@ -389,22 +389,22 @@ export default function Pricing() {
         }
 
         .faq-item:hover {
-          background: rgba(232, 228, 223, 0.04);
-          border-color: rgba(232, 228, 223, 0.12);
+          background: var(--bk-pricing-surface);
+          border-color: var(--bk-pricing-surface-strong);
         }
 
         .faq-trigger {
           font-family: 'Cormorant Garamond', serif;
           font-size: 1.125rem;
           font-weight: 400;
-          color: #e8e4df;
+          color: var(--bk-text);
           letter-spacing: 0.01em;
           padding: 1.25rem;
         }
 
         .faq-content {
           font-family: 'Spectral', serif;
-          color: #a89fa7;
+          color: var(--bk-text-secondary);
           line-height: 1.8;
           padding: 0 1.25rem 1.25rem 1.25rem;
           font-size: 0.975rem;
@@ -413,40 +413,40 @@ export default function Pricing() {
 
         /* Footer */
         .footer-section {
-          border-top: 1px solid rgba(232, 228, 223, 0.1);
+          border-top: 1px solid var(--bk-pricing-border);
           padding: 2rem 0;
           margin-top: 3rem;
         }
 
         .footer-text {
           font-family: 'DM Sans', sans-serif;
-          color: #8a8490;
+          color: var(--bk-text-secondary);
           font-size: 0.925rem;
           text-align: center;
         }
 
         .footer-link {
-          color: #c4956a;
+          color: var(--bk-accent);
           text-decoration: none;
           transition: all 0.3s ease;
-          border-bottom: 1px solid rgba(196, 149, 106, 0.3);
+          border-bottom: 1px solid var(--bk-accent-border);
         }
 
         .footer-link:hover {
-          color: #e8e4df;
-          border-bottom-color: rgba(196, 149, 106, 0.6);
+          color: var(--bk-text);
+          border-bottom-color: var(--bk-accent-border-strong);
         }
 
         /* Sections Divider */
         .section-divider {
           height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(232, 228, 223, 0.1), transparent);
+          background: linear-gradient(90deg, transparent, var(--bk-pricing-border), transparent);
           margin: 3rem 0;
         }
       `}</style>
 
       {/* Navigation Header */}
-      <div className="border-b px-6" style={{ borderColor: 'rgba(232, 228, 223, 0.08)' }}>
+      <div className="border-b px-6" style={{ borderColor: 'var(--bk-pricing-surface-strong)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="nav-header">
             <h1 className="nav-title">Booken</h1>
@@ -466,7 +466,7 @@ export default function Pricing() {
           <div className="bk-divider mb-8"></div>
           <p
             className="text-lg max-w-2xl mx-auto"
-            style={{ fontFamily: "'DM Sans', sans-serif", color: '#a89fa7' }}
+            style={{ fontFamily: "'DM Sans', sans-serif", color: 'var(--bk-text-secondary)' }}
           >
             Professional book production tools for independent authors and publishers
           </p>
@@ -581,7 +581,7 @@ export default function Pricing() {
       </div>
 
       {/* Footer */}
-      <div className="footer-section px-6" style={{ borderColor: 'rgba(232, 228, 223, 0.08)' }}>
+      <div className="footer-section px-6" style={{ borderColor: 'var(--bk-pricing-surface-strong)' }}>
         <div className="max-w-7xl mx-auto text-center">
           <p className="footer-text">
             Questions about our plans?{' '}
