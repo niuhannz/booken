@@ -114,20 +114,20 @@ const DEFAULTS: Settings = {
   customWidth: 5.5,
   customHeight: 8.5,
   unit: 'in',
-  marginTop: 0.875,
-  marginBottom: 0.75,
-  marginInner: 0.875,
-  marginOuter: 0.625,
+  marginTop: 0.75,
+  marginBottom: 0.7,
+  marginInner: 0.85,
+  marginOuter: 0.65,
   mirrorMargins: true,
   fontIdx: 0,
   fontSize: 11,
-  lineHeight: 1.45,
+  lineHeight: 1.5,
   firstLineIndent: 0.25,
-  paragraphSpacing: 4,
+  paragraphSpacing: 0,
   chapterStartRecto: true,
   dropCaps: true,
   dropCapLines: 3,
-  chapterFontSize: 24,
+  chapterFontSize: 22,
   showRunningHeader: true,
   bookTitle: 'Untitled Book',
   showPageNumbers: true,
@@ -185,7 +185,7 @@ function paginateText(
 
   // Estimate characters per line
   const textAreaW = (trimW - settings.marginInner - settings.marginOuter) * 72;
-  const avgCharWidth = settings.fontSize * 0.5; // rough approximation
+  const avgCharWidth = settings.fontSize * 0.42; // calibrated for proportional serif fonts
   const charsPerLine = Math.floor(textAreaW / avgCharWidth);
 
   const pages: PageObj[] = [];
@@ -362,6 +362,12 @@ export default function Typesetter() {
       chapterFontSize: preset.chapterFontSize,
       dropCaps: preset.dropCaps,
       dropCapLines: preset.dropCapLines,
+      // Apply page setup from preset if provided
+      ...(preset.trimSizeName && { trimSizeName: preset.trimSizeName }),
+      ...(preset.marginTop !== undefined && { marginTop: preset.marginTop }),
+      ...(preset.marginBottom !== undefined && { marginBottom: preset.marginBottom }),
+      ...(preset.marginInner !== undefined && { marginInner: preset.marginInner }),
+      ...(preset.marginOuter !== undefined && { marginOuter: preset.marginOuter }),
     }));
   };
 
@@ -506,9 +512,62 @@ export default function Typesetter() {
   };
 
   // ── Render helpers ──
-  const PAGE_SCALE = 0.65;
+  const PAGE_SCALE = 0.72;
   const pageWPx = trimW * 96 * PAGE_SCALE;
   const pageHPx = trimH * 96 * PAGE_SCALE;
+
+  // Group pre-wrapped lines back into paragraphs for proper CSS rendering
+  interface PageElement {
+    type: 'heading' | 'paragraph' | 'spacing';
+    text: string;
+    hasDropCap: boolean;
+    hasIndent: boolean;
+  }
+
+  const groupLinesIntoParagraphs = (lines: string[]): PageElement[] => {
+    const elements: PageElement[] = [];
+    let currentWords: string[] = [];
+    let paraDropCap = false;
+    let paraIndent = false;
+
+    const flush = () => {
+      if (currentWords.length > 0) {
+        elements.push({
+          type: 'paragraph',
+          text: currentWords.join(' '),
+          hasDropCap: paraDropCap,
+          hasIndent: paraIndent,
+        });
+        currentWords = [];
+        paraDropCap = false;
+        paraIndent = false;
+      }
+    };
+
+    for (const line of lines) {
+      if (line.startsWith('# ')) {
+        flush();
+        elements.push({ type: 'heading', text: line.slice(2), hasDropCap: false, hasIndent: false });
+      } else if (line.trim() === '') {
+        flush();
+        elements.push({ type: 'spacing', text: '', hasDropCap: false, hasIndent: false });
+      } else {
+        let text = line;
+        if (text.startsWith('@@DROPCAP@@')) {
+          paraDropCap = true;
+          text = text.replace('@@DROPCAP@@', '');
+        }
+        if (currentWords.length === 0 && text.startsWith('    ')) {
+          paraIndent = true;
+          text = text.trimStart();
+        }
+        const trimmed = text.trim();
+        if (trimmed) currentWords.push(trimmed);
+      }
+    }
+    flush();
+    return elements;
+  };
 
   const renderPage = (page: PageObj | undefined, idx: number) => {
     if (!page) return null;
@@ -519,6 +578,8 @@ export default function Typesetter() {
     const mr = settings.mirrorMargins
       ? isRecto ? settings.marginOuter : settings.marginInner
       : settings.marginOuter;
+
+    const elements = groupLinesIntoParagraphs(page.lines);
 
     return (
       <div
@@ -564,13 +625,13 @@ export default function Typesetter() {
             </div>
           )}
 
-          {/* Page content */}
+          {/* Page content — paragraphs grouped for proper justification */}
           <div className="h-full overflow-hidden">
-            {page.lines.map((line, li) => {
-              if (line.startsWith('# ')) {
+            {elements.map((el, i) => {
+              if (el.type === 'heading') {
                 return (
                   <div
-                    key={li}
+                    key={i}
                     style={{
                       fontFamily: '"Playfair Display", serif',
                       fontSize: settings.chapterFontSize * PAGE_SCALE,
@@ -582,22 +643,21 @@ export default function Typesetter() {
                       lineHeight: 1.2,
                     }}
                   >
-                    {line.slice(2)}
+                    {el.text}
                   </div>
                 );
               }
-              if (line.trim() === '') {
-                return <div key={li} style={{ height: settings.paragraphSpacing * PAGE_SCALE }} />;
+
+              if (el.type === 'spacing') {
+                return <div key={i} style={{ height: settings.paragraphSpacing * PAGE_SCALE }} />;
               }
 
-              const hasDropCap = line.startsWith('@@DROPCAP@@');
-              const text = line.replace('@@DROPCAP@@', '');
-
-              if (hasDropCap && settings.dropCaps && text.length > 0) {
-                const firstChar = text.charAt(0);
-                const rest = text.substring(1);
+              // Paragraph — rendered as single <p> for proper text-align: justify
+              if (el.hasDropCap && settings.dropCaps && el.text.length > 0) {
+                const firstChar = el.text.charAt(0);
+                const rest = el.text.substring(1);
                 return (
-                  <p key={li} style={{ textAlign: 'justify', margin: 0, textIndent: 0 }}>
+                  <p key={i} style={{ textAlign: 'justify', margin: 0, textIndent: 0 }}>
                     <span
                       style={{
                         float: 'left',
@@ -606,6 +666,7 @@ export default function Typesetter() {
                         fontWeight: 700,
                         marginRight: 3 * PAGE_SCALE,
                         marginTop: 2 * PAGE_SCALE,
+                        fontFamily: '"Playfair Display", serif',
                         color: '#1a1a1a',
                       }}
                     >
@@ -618,15 +679,14 @@ export default function Typesetter() {
 
               return (
                 <p
-                  key={li}
+                  key={i}
                   style={{
                     margin: 0,
                     textAlign: 'justify',
-                    textIndent:
-                      line.startsWith('    ') ? settings.firstLineIndent * 96 * PAGE_SCALE : 0,
+                    textIndent: el.hasIndent ? settings.firstLineIndent * 96 * PAGE_SCALE : 0,
                   }}
                 >
-                  {text}
+                  {el.text}
                 </p>
               );
             })}

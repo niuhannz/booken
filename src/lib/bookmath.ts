@@ -128,12 +128,12 @@ export interface PageLayout {
 export const DEFAULT_LAYOUT: PageLayout = {
   trimWidth: 5.5,
   trimHeight: 8.5,
-  marginTop: 0.875,
-  marginBottom: 0.75,
-  marginInner: 0.875,
-  marginOuter: 0.625,
+  marginTop: 0.75,
+  marginBottom: 0.7,
+  marginInner: 0.85,
+  marginOuter: 0.65,
   fontSize: 11,
-  lineHeight: 1.45,
+  lineHeight: 1.5,
   fontFamily: 'Georgia, serif',
 };
 
@@ -174,44 +174,70 @@ export interface TypesetPreset {
   chapterFontSize: number;
   dropCaps: boolean;
   dropCapLines: number;
+  // Optional page setup (applied when preset is selected)
+  trimSizeName?: string;
+  marginTop?: number;
+  marginBottom?: number;
+  marginInner?: number;
+  marginOuter?: number;
 }
 
 export const TYPESET_PRESETS: TypesetPreset[] = [
   {
     name: 'Classic Novel',
     description: 'Garamond · 11pt · Traditional indented paragraphs with drop caps',
-    fontIdx: 0, fontSize: 11, lineHeight: 1.45, firstLineIndent: 0.25,
+    fontIdx: 0, fontSize: 11, lineHeight: 1.5, firstLineIndent: 0.25,
     paragraphSpacing: 0, chapterFontSize: 22, dropCaps: true, dropCapLines: 3,
+    trimSizeName: '5.5" × 8.5"',
+    marginTop: 0.75, marginBottom: 0.7, marginInner: 0.85, marginOuter: 0.65,
   },
   {
     name: 'Modern Fiction',
-    description: 'Lora · 11.5pt · Clean contemporary look',
-    fontIdx: 3, fontSize: 11.5, lineHeight: 1.5, firstLineIndent: 0.2,
-    paragraphSpacing: 2, chapterFontSize: 26, dropCaps: false, dropCapLines: 3,
+    description: 'Lora · 11pt · Clean contemporary look with subtle spacing',
+    fontIdx: 3, fontSize: 11, lineHeight: 1.5, firstLineIndent: 0.2,
+    paragraphSpacing: 0, chapterFontSize: 26, dropCaps: false, dropCapLines: 3,
+    trimSizeName: '5.5" × 8.5"',
+    marginTop: 0.8, marginBottom: 0.7, marginInner: 0.8, marginOuter: 0.6,
   },
   {
     name: 'Literary Press',
-    description: 'Spectral · 10.5pt · Tight elegant setting',
-    fontIdx: 6, fontSize: 10.5, lineHeight: 1.42, firstLineIndent: 0.3,
+    description: 'Crimson Text · 10.5pt · Refined small-press setting',
+    fontIdx: 2, fontSize: 10.5, lineHeight: 1.48, firstLineIndent: 0.3,
     paragraphSpacing: 0, chapterFontSize: 20, dropCaps: true, dropCapLines: 2,
+    trimSizeName: '5" × 8"',
+    marginTop: 0.7, marginBottom: 0.65, marginInner: 0.8, marginOuter: 0.55,
+  },
+  {
+    name: 'Trade Paperback',
+    description: 'Source Serif · 11pt · 6×9 format for nonfiction & memoirs',
+    fontIdx: 4, fontSize: 11, lineHeight: 1.5, firstLineIndent: 0.25,
+    paragraphSpacing: 0, chapterFontSize: 24, dropCaps: false, dropCapLines: 3,
+    trimSizeName: '6" × 9"',
+    marginTop: 0.85, marginBottom: 0.75, marginInner: 0.9, marginOuter: 0.7,
   },
   {
     name: 'Poetry Collection',
     description: 'Cormorant Garamond · 12pt · Generous leading for verse',
     fontIdx: 7, fontSize: 12, lineHeight: 1.8, firstLineIndent: 0,
     paragraphSpacing: 8, chapterFontSize: 18, dropCaps: false, dropCapLines: 3,
+    trimSizeName: '5.5" × 8.5"',
+    marginTop: 1.0, marginBottom: 0.85, marginInner: 0.9, marginOuter: 0.75,
   },
   {
     name: 'Academic / Nonfiction',
-    description: 'Source Serif · 11pt · Clear reading for dense text',
-    fontIdx: 4, fontSize: 11, lineHeight: 1.5, firstLineIndent: 0.25,
-    paragraphSpacing: 4, chapterFontSize: 24, dropCaps: false, dropCapLines: 3,
+    description: 'Libre Baskerville · 10.5pt · Dense scholarly layout',
+    fontIdx: 1, fontSize: 10.5, lineHeight: 1.45, firstLineIndent: 0.25,
+    paragraphSpacing: 3, chapterFontSize: 22, dropCaps: false, dropCapLines: 3,
+    trimSizeName: '6" × 9"',
+    marginTop: 0.9, marginBottom: 0.8, marginInner: 0.95, marginOuter: 0.7,
   },
   {
-    name: 'Children\'s Chapter Book',
+    name: "Children's Chapter Book",
     description: 'Merriweather · 13pt · Large, friendly setting',
     fontIdx: 5, fontSize: 13, lineHeight: 1.6, firstLineIndent: 0.2,
-    paragraphSpacing: 6, chapterFontSize: 28, dropCaps: true, dropCapLines: 2,
+    paragraphSpacing: 4, chapterFontSize: 28, dropCaps: true, dropCapLines: 2,
+    trimSizeName: '5.5" × 8.5"',
+    marginTop: 0.85, marginBottom: 0.75, marginInner: 0.85, marginOuter: 0.65,
   },
 ];
 
