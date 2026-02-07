@@ -102,7 +102,6 @@ function AppInner() {
               style={{
                 background: '#c4956a',
                 color: '#08080d',
-                ringOffsetColor: '#08080d',
               }}
             >
               {user.avatar}
