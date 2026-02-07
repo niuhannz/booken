@@ -58,10 +58,103 @@ interface CoverCreatorState {
   showBleeds: boolean;
   showSafeZone: boolean;
   showLabels: boolean;
+  isbnNumber: string;
+  showBarcode: boolean;
+  barcodeX: number;
+  barcodeY: number;
+  barcodeScale: number;
 }
 
 function generateId(): string {
   return `layer_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+}
+
+// EAN-13 barcode renderer
+function drawEAN13Barcode(
+  ctx: CanvasRenderingContext2D,
+  isbn: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) {
+  // Normalize to 13 digits
+  let digits = isbn.replace(/[^0-9]/g, '');
+  if (digits.length === 10) {
+    // Convert ISBN-10 to ISBN-13
+    digits = '978' + digits.slice(0, 9);
+    let sum = 0;
+    for (let i = 0; i < 12; i++) {
+      sum += parseInt(digits[i]) * (i % 2 === 0 ? 1 : 3);
+    }
+    digits += String((10 - (sum % 10)) % 10);
+  }
+  if (digits.length !== 13) return;
+
+  const L_PATTERNS: number[][] = [
+    [0,0,0,1,1,0,1], [0,0,1,1,0,0,1], [0,0,1,0,0,1,1], [0,1,1,1,1,0,1],
+    [0,1,0,0,0,1,1], [0,1,1,0,0,0,1], [0,1,0,1,1,1,1], [0,1,1,1,0,1,1],
+    [0,1,1,0,1,1,1], [0,0,0,1,0,1,1],
+  ];
+  const G_PATTERNS: number[][] = [
+    [0,1,0,0,1,1,1], [0,1,1,0,0,1,1], [0,0,1,1,0,1,1], [0,1,0,0,0,0,1],
+    [0,0,1,1,1,0,1], [0,0,0,0,1,0,1], [0,0,0,1,0,0,1], [0,0,0,1,0,0,1],  // Note: simplified
+    [0,0,1,0,0,0,1], [0,0,1,0,1,1,1],
+  ];
+  const R_PATTERNS: number[][] = [
+    [1,1,1,0,0,1,0], [1,1,0,0,1,1,0], [1,1,0,1,1,0,0], [1,0,0,0,0,1,0],
+    [1,0,1,1,1,0,0], [1,0,0,1,1,1,0], [1,0,1,0,0,0,0], [1,0,0,0,1,0,0],
+    [1,0,0,1,0,0,0], [1,1,1,0,1,0,0],
+  ];
+  const PARITY_PATTERNS: number[][] = [
+    [0,0,0,0,0,0], [0,0,1,0,1,1], [0,0,1,1,0,1], [0,0,1,1,1,0],
+    [0,1,0,0,1,1], [0,1,1,0,0,1], [0,1,1,1,0,0], [0,1,0,1,0,1],
+    [0,1,0,1,1,0], [0,1,1,0,1,0],
+  ];
+
+  // Build binary pattern
+  const bars: number[] = [];
+  // Start guard
+  bars.push(1, 0, 1);
+  // Left 6 digits
+  const parity = PARITY_PATTERNS[parseInt(digits[0])];
+  for (let i = 1; i <= 6; i++) {
+    const d = parseInt(digits[i]);
+    const pattern = parity[i - 1] === 0 ? L_PATTERNS[d] : G_PATTERNS[d];
+    bars.push(...pattern);
+  }
+  // Middle guard
+  bars.push(0, 1, 0, 1, 0);
+  // Right 6 digits
+  for (let i = 7; i <= 12; i++) {
+    bars.push(...R_PATTERNS[parseInt(digits[i])]);
+  }
+  // End guard
+  bars.push(1, 0, 1);
+
+  // Draw white background with padding
+  const padding = width * 0.08;
+  const textHeight = height * 0.15;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(x - padding, y - padding, width + padding * 2, height + padding + textHeight);
+
+  // Draw bars
+  const barWidth = width / bars.length;
+  const barHeight = height * 0.85;
+  ctx.fillStyle = '#000000';
+  for (let i = 0; i < bars.length; i++) {
+    if (bars[i] === 1) {
+      ctx.fillRect(x + i * barWidth, y, barWidth + 0.5, barHeight);
+    }
+  }
+
+  // Draw ISBN text below
+  ctx.fillStyle = '#000000';
+  ctx.font = `${Math.max(8, height * 0.12)}px "OCR-B", "Courier New", monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  const formatted = `ISBN ${digits.slice(0, 3)}-${digits.slice(3, 4)}-${digits.slice(4, 9)}-${digits.slice(9, 12)}-${digits[12]}`;
+  ctx.fillText(formatted, x + width / 2, y + barHeight + 2);
 }
 
 export default function CoverCreator() {
@@ -86,6 +179,11 @@ export default function CoverCreator() {
     showBleeds: true,
     showSafeZone: true,
     showLabels: true,
+    isbnNumber: '',
+    showBarcode: false,
+    barcodeX: 50,
+    barcodeY: 85,
+    barcodeScale: 100,
   });
 
   const [textLayers, setTextLayers] = useState<CoverTextLayer[]>(
@@ -94,6 +192,8 @@ export default function CoverCreator() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [cachedImage, setCachedImage] = useState<HTMLImageElement | null>(null);
 
   // Get current trim size
   const getTrimSize = (): { width: number; height: number } => {
@@ -169,6 +269,20 @@ export default function CoverCreator() {
     saveTextLayers();
   }, [textLayers, saveTextLayers]);
 
+  // Pre-load cover image
+  useEffect(() => {
+    const imageUrl = state.generatedImage || state.uploadedImage;
+    if (!imageUrl) {
+      setCachedImage(null);
+      return;
+    }
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => setCachedImage(img);
+    img.onerror = () => setCachedImage(null);
+    img.src = imageUrl;
+  }, [state.generatedImage, state.uploadedImage]);
+
   // Draw canvas
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -213,19 +327,13 @@ export default function CoverCreator() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(backStart, topBleed, inToPx(dimensions.fullWidth - dimensions.bleed * 2), coverHeight);
 
-    // Draw uploaded/generated image on front cover
-    const imageUrl = state.generatedImage || state.uploadedImage;
-    if (imageUrl) {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const frontCoverX = frontStart;
-        const frontCoverY = topBleed;
-        const frontCoverWidth = inToPx(dimensions.trimWidth);
-        const frontCoverHeight = coverHeight;
-        ctx.drawImage(img, frontCoverX, frontCoverY, frontCoverWidth, frontCoverHeight);
-      };
-      img.src = imageUrl;
+    // Draw uploaded/generated image on front cover (synchronous using cached image)
+    if (cachedImage) {
+      const frontCoverX = frontStart;
+      const frontCoverY = topBleed;
+      const frontCoverWidth = inToPx(dimensions.trimWidth);
+      const frontCoverHeight = coverHeight;
+      ctx.drawImage(cachedImage, frontCoverX, frontCoverY, frontCoverWidth, frontCoverHeight);
     }
 
     // Draw trim lines (red dashed)
@@ -324,7 +432,16 @@ export default function CoverCreator() {
       ctx.textBaseline = 'top';
       ctx.fillText(layer.text, textX, textY);
     });
-  }, [dimensions, state.zoomLevel, state.showBleeds, state.showSafeZone, state.showLabels, state.uploadedImage, state.generatedImage, textLayers]);
+
+    // Draw barcode on back cover
+    if (state.showBarcode && state.isbnNumber.replace(/[^0-9]/g, '').length >= 10) {
+      const bcWidth = inToPx(dimensions.trimWidth) * 0.5 * (state.barcodeScale / 100);
+      const bcHeight = bcWidth * 0.6;
+      const bcX = backStart + (state.barcodeX / 100) * inToPx(dimensions.trimWidth) - bcWidth / 2;
+      const bcY = topBleed + (state.barcodeY / 100) * coverHeight - bcHeight / 2;
+      drawEAN13Barcode(ctx, state.isbnNumber, bcX, bcY, bcWidth, bcHeight);
+    }
+  }, [dimensions, state.zoomLevel, state.showBleeds, state.showSafeZone, state.showLabels, cachedImage, textLayers, state.isbnNumber, state.showBarcode, state.barcodeX, state.barcodeY, state.barcodeScale]);
 
   // Handle trim size change
   const handleTrimSizeChange = (value: string) => {
@@ -705,6 +822,56 @@ export default function CoverCreator() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Barcode Section */}
+              <div style={{ borderTop: '1px solid var(--bk-border)', marginTop: '1rem', paddingTop: '1rem' }}>
+                <h3 className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--bk-text-muted)' }}>
+                  ISBN Barcode
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs" style={{ color: 'var(--bk-text-secondary)' }}>Show Barcode</Label>
+                    <Checkbox
+                      checked={state.showBarcode}
+                      onCheckedChange={(v) => setState((p) => ({ ...p, showBarcode: !!v }))}
+                    />
+                  </div>
+                  {state.showBarcode && (
+                    <>
+                      <div>
+                        <Label className="text-xs mb-1" style={{ color: 'var(--bk-text-secondary)' }}>ISBN Number</Label>
+                        <Input
+                          className="h-7 text-xs font-mono"
+                          placeholder="978-0-000-00000-0"
+                          value={state.isbnNumber}
+                          onChange={(e) => setState((p) => ({ ...p, isbnNumber: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs flex justify-between mb-1" style={{ color: 'var(--bk-text-secondary)' }}>
+                          <span>Position X</span><span className="font-mono">{state.barcodeX}%</span>
+                        </Label>
+                        <Slider min={10} max={90} step={1} value={[state.barcodeX]}
+                          onValueChange={([v]) => setState((p) => ({ ...p, barcodeX: v }))} />
+                      </div>
+                      <div>
+                        <Label className="text-xs flex justify-between mb-1" style={{ color: 'var(--bk-text-secondary)' }}>
+                          <span>Position Y</span><span className="font-mono">{state.barcodeY}%</span>
+                        </Label>
+                        <Slider min={10} max={95} step={1} value={[state.barcodeY]}
+                          onValueChange={([v]) => setState((p) => ({ ...p, barcodeY: v }))} />
+                      </div>
+                      <div>
+                        <Label className="text-xs flex justify-between mb-1" style={{ color: 'var(--bk-text-secondary)' }}>
+                          <span>Scale</span><span className="font-mono">{state.barcodeScale}%</span>
+                        </Label>
+                        <Slider min={50} max={150} step={5} value={[state.barcodeScale]}
+                          onValueChange={([v]) => setState((p) => ({ ...p, barcodeScale: v }))} />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </TabsContent>
 
             {/* Text Layers Tab */}

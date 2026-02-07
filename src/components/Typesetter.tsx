@@ -36,11 +36,16 @@ import {
 
 const SAMPLE_TEXT = `# Chapter One
 
+> "The past is never dead. It's not even past."
+> — William Faulkner
+
 The morning light crept through the curtains, casting long shadows across the worn wooden floor. Eleanor stood at the window, watching the last stars fade into the pale blue canvas of dawn. The village below was stirring — a baker's chimney sent its first plume of smoke into the cool air, and somewhere a rooster declared the day begun.
 
 She had not slept well. The letter lay on her desk where she had left it, its cream-colored envelope bearing the seal of the Alderman's office. Three months she had waited for a response, and now that it had arrived, she found herself unable to read past the first line.
 
 "Dear Miss Ashworth," it began, and already she could sense the careful, diplomatic language that would follow — the kind of language used to soften a blow.
+
+## The Letter
 
 The floorboards creaked behind her. "You're up early," said Thomas, leaning against the doorframe. His shirt was untucked, his dark hair still tousled from sleep. He held two cups of tea, offering one to her with the steady hand of someone who had learned not to ask too many questions before breakfast.
 
@@ -54,6 +59,18 @@ He nodded slowly, sipping his tea. "Then there's still hope in Schrödinger's en
 
 Eleanor almost smiled. Almost. Instead she turned back to the window and watched the village come alive, one chimney at a time. There would be time enough for letters and their consequences. For now, the morning was still hers.
 
+***
+
+She returned to the desk and unfolded the letter. Her eyes traced the careful script, and she read aloud in a voice barely above a whisper:
+
+> We regret to inform you that the documentation submitted in support of your claim remains incomplete. The Alderman's office requires further evidence of residency, specifically parish records dating to the period in question.
+
+Thomas set his cup down gently. "So they haven't said no."
+
+>> Come, let us go then, you and I,
+>> When the evening is spread out against the sky
+>> Like a patient etherized upon a table.
+
 # Chapter Two
 
 The road to Blackmere wound through dense woodland, the kind of forest that swallowed sound and light in equal measure. Eleanor walked it alone, her boots crunching on the gravel path that had been laid down — according to local legend — by monks fleeing the dissolution of the monasteries.
@@ -61,6 +78,8 @@ The road to Blackmere wound through dense woodland, the kind of forest that swal
 Whether that was true or merely a pleasant fiction, the path served its purpose. It connected the village of Ashford to the neighboring town of Blackmere, a journey of roughly four miles that could be completed in an hour of brisk walking or two hours of contemplation.
 
 Eleanor chose contemplation.
+
+## The Alderman's Demands
 
 The letter, which she had finally read in its entirety over a second cup of tea, contained both less and more than she had feared. The Alderman's office acknowledged her petition. They did not dismiss it outright, which was more than most had predicted. But they required documentation — birth records, property deeds, letters of character — that would take weeks to assemble.
 
@@ -164,8 +183,22 @@ function paginateText(
       if (cur) chapters.push(cur);
       cur = { title: line.slice(2).trim(), paragraphs: [] };
       pBuf = [];
-    } else if (line.trim() === '') {
+    } else if (line.trim() === '' || line.trim() === '***' || line.trim() === '---') {
       flushPara();
+      if (cur) {
+        if (line.trim() === '***' || line.trim() === '---') {
+          cur.paragraphs.push(['***']);
+        }
+      }
+    } else if (line.startsWith('## ')) {
+      flushPara();
+      if (cur) cur.paragraphs.push([line]);
+    } else if (line.startsWith('>> ')) {
+      flushPara();
+      if (cur) cur.paragraphs.push([line]);
+    } else if (line.startsWith('> ')) {
+      flushPara();
+      if (cur) cur.paragraphs.push([line]);
     } else {
       pBuf.push(line);
     }
@@ -268,7 +301,39 @@ function paginateText(
     for (let pi = 0; pi < ch.paragraphs.length; pi++) {
       const para = ch.paragraphs[pi];
       const paraText = para.join(' ');
-      const isFirstPara = pi === 0;
+
+      // Scene break
+      if (para.length === 1 && para[0] === '***') {
+        addLine('***', 2);
+        continue;
+      }
+
+      // Subheading
+      if (para.length === 1 && para[0].startsWith('## ')) {
+        addLine(para[0], 2);
+        continue;
+      }
+
+      // Block quote
+      if (para.length === 1 && para[0].startsWith('> ') && !para[0].startsWith('>> ')) {
+        const quoteText = para[0].slice(2);
+        const wrappedLines = wrapParagraph(quoteText, false);
+        for (const wl of wrappedLines) {
+          addLine('> ' + wl, 1);
+        }
+        continue;
+      }
+
+      // Verse
+      if (para.length === 1 && para[0].startsWith('>> ')) {
+        const verseText = para[0].slice(3);
+        addLine('>> ' + verseText, 1);
+        continue;
+      }
+
+      const isFirstPara = pi === 0 ||
+        (pi > 0 && ch.paragraphs[pi - 1].length === 1 &&
+         (ch.paragraphs[pi - 1][0] === '***' || ch.paragraphs[pi - 1][0].startsWith('## ')));
       const wrappedLines = wrapParagraph(paraText, !isFirstPara && settings.firstLineIndent > 0);
 
       // Add paragraph spacing
@@ -311,9 +376,73 @@ export default function Typesetter() {
   const [pages, setPages] = useState<PageObj[]>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [twoPageView, setTwoPageView] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    selStart: number;
+    selEnd: number;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const store = useStore();
+
+  const handleContextMenu = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    const textarea = e.currentTarget;
+    const selStart = textarea.selectionStart;
+    const selEnd = textarea.selectionEnd;
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      selStart,
+      selEnd,
+    });
+  };
+
+  const applyFormatting = (prefix: string, type: 'line' | 'block' | 'insert') => {
+    const sel = contextMenu;
+    if (!sel) return;
+
+    const before = manuscript.substring(0, sel.selStart);
+    const selected = manuscript.substring(sel.selStart, sel.selEnd);
+    const after = manuscript.substring(sel.selEnd);
+
+    let newText: string;
+    if (type === 'insert') {
+      // Insert at cursor (scene break, etc.)
+      newText = before + '\n' + prefix + '\n' + after;
+    } else if (type === 'block') {
+      // Prefix each line in selection
+      const lines = selected.split('\n');
+      const formatted = lines.map(l => {
+        // Remove existing prefixes first
+        const cleaned = l.replace(/^(#{1,3}\s|>\s|>>\s)/, '');
+        return prefix + cleaned;
+      }).join('\n');
+      newText = before + formatted + after;
+    } else {
+      // Line prefix - apply to first line
+      const cleaned = selected.replace(/^(#{1,3}\s|>\s|>>\s)/, '');
+      newText = before + prefix + cleaned + after;
+    }
+
+    setManuscript(newText);
+    setContextMenu(null);
+  };
+
+  const clearFormatting = () => {
+    const sel = contextMenu;
+    if (!sel) return;
+    const before = manuscript.substring(0, sel.selStart);
+    const selected = manuscript.substring(sel.selStart, sel.selEnd);
+    const after = manuscript.substring(sel.selEnd);
+    const lines = selected.split('\n');
+    const cleaned = lines.map(l => l.replace(/^(#{1,3}\s|>\s|>>\s|\*\*\*|---)/, '').trim()).join('\n');
+    setManuscript(before + cleaned + after);
+    setContextMenu(null);
+  };
 
   // Load manuscript on mount if there's an active project
   useEffect(() => {
@@ -341,6 +470,15 @@ export default function Typesetter() {
     }, 300);
     return () => clearTimeout(debounceRef.current);
   }, [manuscript, settings, trimW, trimH]);
+
+  // Click-away listener for context menu
+  useEffect(() => {
+    const handleClick = () => setContextMenu(null);
+    if (contextMenu) {
+      window.addEventListener('click', handleClick);
+      return () => window.removeEventListener('click', handleClick);
+    }
+  }, [contextMenu]);
 
   const set = useCallback(
     <K extends keyof Settings>(key: K, val: Settings[K]) => {
@@ -455,6 +593,43 @@ export default function Typesetter() {
           y += lineHMm * 1.5;
           doc.setFontSize(settings.fontSize);
           doc.setFont('helvetica', 'normal');
+        } else if (line.startsWith('## ')) {
+          // Subheading
+          const subTitle = line.slice(3).trim();
+          y += lineHMm * 1.5;
+          doc.setFontSize(settings.chapterFontSize * 0.7);
+          doc.setFont('helvetica', 'bolditalic');
+          doc.text(subTitle, ml, y);
+          y += lineHMm * 1;
+          doc.setFontSize(settings.fontSize);
+          doc.setFont('helvetica', 'normal');
+        } else if (line === '***' || line === '---') {
+          // Scene break
+          y += lineHMm * 1.5;
+          doc.setFontSize(settings.fontSize);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(120, 120, 120);
+          doc.text('*   *   *', ml + textW / 2, y, { align: 'center' });
+          doc.setTextColor(0, 0, 0);
+          y += lineHMm * 1.5;
+        } else if (line.startsWith('>> ')) {
+          // Verse
+          const verseText = line.slice(3);
+          doc.setFont('helvetica', 'italic');
+          doc.text(verseText, ml + settings.firstLineIndent * 25.4 * 3, y, { maxWidth: textW * 0.7 });
+          doc.setFont('helvetica', 'normal');
+          y += lineHMm;
+        } else if (line.startsWith('> ')) {
+          // Block quote
+          const quoteText = line.slice(2);
+          doc.setFont('helvetica', 'italic');
+          const quoteIndent = settings.firstLineIndent * 25.4 * 2;
+          const wrapped = doc.splitTextToSize(quoteText, textW - quoteIndent * 1.5);
+          for (const wl of wrapped) {
+            doc.text(wl, ml + quoteIndent, y, { maxWidth: textW - quoteIndent * 1.5 });
+            y += lineHMm;
+          }
+          doc.setFont('helvetica', 'normal');
         } else if (line.trim() === '') {
           y += settings.paragraphSpacing / 2.835;
         } else {
@@ -518,7 +693,7 @@ export default function Typesetter() {
 
   // Group pre-wrapped lines back into paragraphs for proper CSS rendering
   interface PageElement {
-    type: 'heading' | 'paragraph' | 'spacing';
+    type: 'heading' | 'subheading' | 'paragraph' | 'blockquote' | 'verse' | 'scene-break' | 'spacing';
     text: string;
     hasDropCap: boolean;
     hasIndent: boolean;
@@ -548,6 +723,18 @@ export default function Typesetter() {
       if (line.startsWith('# ')) {
         flush();
         elements.push({ type: 'heading', text: line.slice(2), hasDropCap: false, hasIndent: false });
+      } else if (line.startsWith('## ')) {
+        flush();
+        elements.push({ type: 'subheading', text: line.slice(3), hasDropCap: false, hasIndent: false });
+      } else if (line === '***' || line === '---') {
+        flush();
+        elements.push({ type: 'scene-break', text: '***', hasDropCap: false, hasIndent: false });
+      } else if (line.startsWith('>> ')) {
+        flush();
+        elements.push({ type: 'verse', text: line.slice(3), hasDropCap: false, hasIndent: false });
+      } else if (line.startsWith('> ')) {
+        flush();
+        elements.push({ type: 'blockquote', text: line.slice(2), hasDropCap: false, hasIndent: false });
       } else if (line.trim() === '') {
         flush();
         elements.push({ type: 'spacing', text: '', hasDropCap: false, hasIndent: false });
@@ -645,6 +832,83 @@ export default function Typesetter() {
                   >
                     {el.text}
                   </div>
+                );
+              }
+
+              if (el.type === 'subheading') {
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      fontFamily: '"EB Garamond", Garamond, serif',
+                      fontSize: (settings.chapterFontSize * 0.7) * PAGE_SCALE,
+                      fontWeight: 600,
+                      fontStyle: 'italic',
+                      marginTop: settings.fontSize * PAGE_SCALE * 1.5,
+                      marginBottom: settings.fontSize * PAGE_SCALE * 0.8,
+                      letterSpacing: '0.02em',
+                      lineHeight: 1.3,
+                      color: '#2a2a2a',
+                    }}
+                  >
+                    {el.text}
+                  </div>
+                );
+              }
+
+              if (el.type === 'scene-break') {
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      textAlign: 'center',
+                      margin: `${settings.fontSize * PAGE_SCALE * 1.5}px 0`,
+                      fontSize: settings.fontSize * PAGE_SCALE,
+                      letterSpacing: '0.3em',
+                      color: '#666',
+                    }}
+                  >
+                    * * *
+                  </div>
+                );
+              }
+
+              if (el.type === 'blockquote') {
+                return (
+                  <p
+                    key={i}
+                    style={{
+                      margin: `${settings.fontSize * PAGE_SCALE * 0.5}px 0`,
+                      marginLeft: settings.firstLineIndent * 96 * PAGE_SCALE * 2,
+                      marginRight: settings.firstLineIndent * 96 * PAGE_SCALE,
+                      textAlign: 'justify',
+                      fontStyle: 'italic',
+                      fontSize: settings.fontSize * PAGE_SCALE * 0.95,
+                      lineHeight: settings.lineHeight,
+                      color: '#333',
+                    }}
+                  >
+                    {el.text}
+                  </p>
+                );
+              }
+
+              if (el.type === 'verse') {
+                return (
+                  <p
+                    key={i}
+                    style={{
+                      margin: `${settings.fontSize * PAGE_SCALE * 0.3}px 0`,
+                      marginLeft: settings.firstLineIndent * 96 * PAGE_SCALE * 3,
+                      textAlign: 'left',
+                      fontStyle: 'italic',
+                      fontSize: settings.fontSize * PAGE_SCALE * 0.95,
+                      lineHeight: settings.lineHeight * 1.1,
+                      color: '#333',
+                    }}
+                  >
+                    {el.text}
+                  </p>
                 );
               }
 
@@ -1127,6 +1391,7 @@ export default function Typesetter() {
           style={{ background: 'var(--bk-surface)', color: 'var(--bk-text)', lineHeight: 1.7 }}
           value={manuscript}
           onChange={(e) => setManuscript(e.target.value)}
+          onContextMenu={handleContextMenu}
           placeholder="Paste your manuscript here. Use # Chapter Title to mark chapters."
           spellCheck={false}
         />
@@ -1135,11 +1400,11 @@ export default function Typesetter() {
           style={{ borderColor: 'var(--bk-border)', background: 'var(--bk-surface)', color: 'var(--bk-text-muted)' }}
         >
           <span>
-            {wordCount.toLocaleString()} words · {charCount.toLocaleString()} characters
+            <strong style={{ color: 'var(--bk-text-secondary)' }}>{wordCount.toLocaleString()}</strong> words · {charCount.toLocaleString()} chars · {pages.length} pages
           </span>
-          <span>Use <code className="rounded px-1" style={{ background: 'var(--bk-border-strong)' }}>
-            # Title
-          </code> for chapters</span>
+          <span>
+            Right-click for formatting · <code className="rounded px-1" style={{ background: 'var(--bk-border-strong)' }}># Title</code> <code className="rounded px-1 ml-1" style={{ background: 'var(--bk-border-strong)' }}>## Sub</code> <code className="rounded px-1 ml-1" style={{ background: 'var(--bk-border-strong)' }}>&gt; Quote</code>
+          </span>
         </div>
       </div>
 
@@ -1257,6 +1522,50 @@ export default function Typesetter() {
           </div>
         </div>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && contextMenu.visible && (
+        <div
+          className="fixed z-50 min-w-[200px] rounded-md border py-1 shadow-xl"
+          style={{
+            left: contextMenu.x,
+            top: contextMenu.y,
+            background: 'var(--bk-surface)',
+            borderColor: 'var(--bk-border)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--bk-text-muted)' }}>
+            Format Selection
+          </div>
+          {[
+            { label: 'Subheading', prefix: '## ', type: 'line' as const, icon: 'H₂' },
+            { label: 'Block Quote', prefix: '> ', type: 'block' as const, icon: '"' },
+            { label: 'Verse / Poetry', prefix: '>> ', type: 'block' as const, icon: '¶' },
+            { label: 'Scene Break', prefix: '***', type: 'insert' as const, icon: '***' },
+          ].map((item) => (
+            <button
+              key={item.label}
+              className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-[var(--bk-accent-bg-subtle)] transition-colors"
+              style={{ color: 'var(--bk-text)' }}
+              onClick={() => applyFormatting(item.prefix, item.type)}
+            >
+              <span className="w-6 text-center font-mono text-xs" style={{ color: 'var(--bk-accent)' }}>{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+          <div className="my-1" style={{ borderTop: '1px solid var(--bk-border)' }} />
+          <button
+            className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-[var(--bk-accent-bg-subtle)] transition-colors"
+            style={{ color: 'var(--bk-text-muted)' }}
+            onClick={clearFormatting}
+          >
+            <span className="w-6 text-center text-xs">✕</span>
+            Clear Formatting
+          </button>
+        </div>
+      )}
     </div>
   );
 }
